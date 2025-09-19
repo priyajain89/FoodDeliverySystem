@@ -41,38 +41,25 @@ namespace FoodDelivery.Api.Controllers
                 FssaiImage = dto.FssaiImage,
                 TradelicenseImage = dto.TradelicenseImage,
                 TradeId = dto.TradeId,
-                //Latitude = geoResult?.Latitude,
-                //Longitude = geoResult?.Longitude
+                Latitude = geoResult?.Latitude,
+                Longitude = geoResult?.Longitude
             };
 
             try
             {
                 var result = await _repo.SubmitRestaurantDetailsAsync(restaurant);
-
-                var response = new RestaurantResponseDto
-                {
-                    RestaurantId = result.RestaurantId,
-                    UserId = result.UserId ?? 0,
-                    Address = result.Address,
-                    FssaiId = result.FssaiId,
-                    PinCode = result.PinCode,
-                    FssaiImage = result.FssaiImage,
-                    TradelicenseImage = result.TradelicenseImage,
-                    TradeId = result.TradeId,
-                    Latitude = result.Latitude,
-                    Longitude = result.Longitude
-                };
-
-                return Ok(response);
+                return Ok(result);
             }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
             }
+
+
         }
 
 
-            [HttpGet("getAllrestaurants")]
+        [HttpGet("getAllrestaurants")]
             public async Task<IActionResult> GetAllRestaurants()
         {
             var restaurants = await _repo.GetAllRestaurantsAsync();
@@ -80,7 +67,7 @@ namespace FoodDelivery.Api.Controllers
         }
 
             [HttpPut("restaurant/update")]
-            public async Task<IActionResult> UpdateRestaurant([FromBody] RestaurantResponseDto dto)
+            public async Task<IActionResult> UpdateRestaurant([FromBody] RestaurantIDDto dto)
             {
                 var result = await _repo.UpdateRestaurantAsync(dto);
                 if (!result) return NotFound("Restaurant not found.");

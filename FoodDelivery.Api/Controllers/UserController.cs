@@ -1,10 +1,7 @@
-<<<<<<< HEAD
+
 
 ﻿using FoodDelivery.Domain.Models;
-=======
 ﻿using FoodDelivery.Domain.Data;
-using FoodDelivery.Domain.Models;
->>>>>>> 45b9bc316a494d87fcfbb3eb3bbf629e269a614d
 using FoodDelivery.Infrastructure.DTO;
 using FoodDelivery.Infrastructure.Services;
 using FoodDelivery.Infrastructure.Repository;

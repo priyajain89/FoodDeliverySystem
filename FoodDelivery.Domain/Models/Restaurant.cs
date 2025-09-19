@@ -27,12 +27,8 @@ public partial class Restaurant
 
     [StringLength(50)]
     public string? TradeId { get; set; }
-
-    [StringLength(50)]
-    public string? Latitude { get; set; }
-
-    [StringLength(50)]
-    public string? Longitude { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
 
     [JsonIgnore]
 

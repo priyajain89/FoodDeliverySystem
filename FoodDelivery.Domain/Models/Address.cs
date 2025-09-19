@@ -33,11 +33,8 @@ public partial class Address
 
     public bool? IsDefault { get; set; }
 
-    [StringLength(50)]
-    public string? Latitude { get; set; }
-
-    [StringLength(50)]
-    public string? Longitude { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
 
     [InverseProperty("Address")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
