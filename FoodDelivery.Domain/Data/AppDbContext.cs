@@ -37,8 +37,7 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
-        => optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=FoodDeliverySystem; User=SA; Password=password-1 ; TrustServerCertificate=true");
+        => optionsBuilder.UseSqlServer("Server= localhost;Initial Catalog= FoodDeliverySystem; User=SA; Password=password-1 ; TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
