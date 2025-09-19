@@ -18,7 +18,10 @@ namespace FoodDelivery.Api
 
             // Add services to the container.
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            
+            builder.Services.AddScoped<IDeliveryagent, Deliveryagent>();
+            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
@@ -30,8 +33,16 @@ namespace FoodDelivery.Api
                 c.UseInlineDefinitionsForEnums();
             });
 
+            builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
+
 
             var app = builder.Build();
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
