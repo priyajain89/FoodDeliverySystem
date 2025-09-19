@@ -56,9 +56,7 @@ namespace FoodDelivery.Api.Controllers{
         }
 
         [HttpPost("register")]
-
         public async Task<IActionResult> Create([FromBody] UserDto dto)
-
         {
             var existingUser = await _userRepository.GetUserByEmailOrPhoneAsync(dto.Email, dto.Phone);
             if (existingUser != null)
@@ -75,23 +73,20 @@ namespace FoodDelivery.Api.Controllers{
                 }
             }
 
-
             var user = new User
             {
                 Name = dto.Name,
                 Email = dto.Email,
                 Phone = dto.Phone,
                 Role = dto.Role,
-
-                IsVerified = dto.Role.ToLower() == "customer"
-
+                IsVerified = dto.Role.ToLower() == "customer" || dto.Role.ToLower() == "admin"
             };
 
             var created = await _userRepository.CreateUserAsync(user);
 
             return CreatedAtAction(nameof(GetById), new { id = created.UserId }, created);
-
         }
+
 
         [HttpGet("role/{role}")]
         public async Task<IActionResult> GetByRole(string role)
@@ -147,6 +142,11 @@ namespace FoodDelivery.Api.Controllers{
             if (user == null)
             {
                 return Unauthorized("You are not a registered user.");
+            }
+
+            if (user.IsVerified != null && user.IsVerified == true)
+            {
+                return Unauthorized("Your account is not verified. Please contact support.");
             }
 
             await _otpService.GenerateOtpAsync(dto.Email);
