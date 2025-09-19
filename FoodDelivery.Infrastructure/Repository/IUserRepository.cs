@@ -1,3 +1,4 @@
+
 ﻿using FoodDelivery.Domain.Models;
 
 namespace FoodDelivery.Infrastructure.Repository
@@ -22,3 +23,4 @@ namespace FoodDelivery.Infrastructure.Repository
 
     }
 }
+

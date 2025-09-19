@@ -20,18 +20,35 @@ namespace FoodDelivery.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+<<<<<<< HEAD
             builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+=======
+            builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+
+            builder.Services.AddScoped<IDeliveryagentRepository, DeliveryagentRepository>();
+            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+            builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();
+
+>>>>>>> 67e8c165cbd6994db9fc642c79e4695b08f02e7f
 
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGen(c =>
             {
                 c.UseInlineDefinitionsForEnums();
             });
+
+
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.WriteIndented = true;
+                });
 
             builder.Services.AddSingleton<OtpService>();
 
@@ -99,7 +116,9 @@ namespace FoodDelivery.Api
 
 
 
+
             var app = builder.Build();
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
