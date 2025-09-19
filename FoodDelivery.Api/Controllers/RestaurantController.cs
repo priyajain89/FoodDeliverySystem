@@ -1,8 +1,9 @@
 ﻿using FoodDelivery.Domain.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using FoodDelivery.Infrastructure.DTO;
 using FoodDelivery.Infrastructure.Repository;
+using FoodDelivery.Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDelivery.Api.Controllers
 {
@@ -14,16 +15,23 @@ namespace FoodDelivery.Api.Controllers
 
      
             private readonly IRestaurantRepository _repo;
+            private readonly IGeocodingService _geocodingService;
 
-            public RestaurantController(IRestaurantRepository repo)
+        public RestaurantController(IRestaurantRepository repo, IGeocodingService geocodingService)
             {
                 _repo = repo;
-            }
+            _geocodingService = geocodingService;
+        }
 
             [HttpPost("submit")]
        
-        public async Task<IActionResult> SubmitDetails([FromBody] RestaurantResponseDto dto)
+            public async Task<IActionResult> SubmitDetails([FromBody] RestaurantResponseDto dto)
         {
+            var fullAddress = $"{dto.Address}, {dto.PinCode}";
+
+            // Get coordinates from geocoding service
+            var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
+
             var restaurant = new Restaurant
             {
                 UserId = dto.UserId,
@@ -33,8 +41,8 @@ namespace FoodDelivery.Api.Controllers
                 FssaiImage = dto.FssaiImage,
                 TradelicenseImage = dto.TradelicenseImage,
                 TradeId = dto.TradeId,
-                Latitude = dto.Latitude,
-                Longitude = dto.Longitude
+                //Latitude = geoResult?.Latitude,
+                //Longitude = geoResult?.Longitude
             };
 
             try
@@ -62,6 +70,24 @@ namespace FoodDelivery.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+            [HttpGet("getAllrestaurants")]
+            public async Task<IActionResult> GetAllRestaurants()
+        {
+            var restaurants = await _repo.GetAllRestaurantsAsync();
+            return Ok(restaurants);
+        }
+
+            [HttpPut("restaurant/update")]
+            public async Task<IActionResult> UpdateRestaurant([FromBody] RestaurantResponseDto dto)
+            {
+                var result = await _repo.UpdateRestaurantAsync(dto);
+                if (!result) return NotFound("Restaurant not found.");
+                return Ok("Restaurant updated successfully.");
+            }
+
+
 
     }
 }

@@ -1,13 +1,14 @@
 ﻿using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
+using FoodDelivery.Infrastructure.DTO;
 
 namespace FoodDelivery.Infrastructure.Repository
 {
-    public class Deliveryagent : IDeliveryagent
+    public class DeliveryagentRepository : IDeliveryagentRepository
     {
         private readonly AppDbContext _context;
 
-        public Deliveryagent(AppDbContext context)
+        public DeliveryagentRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -23,6 +24,21 @@ namespace FoodDelivery.Infrastructure.Repository
                 await _context.SaveChangesAsync();
                 return agent;
             }
+
+        public async Task<bool> UpdateDeliveryAgentAsync(DeliveryAgentResponseDto dto)
+        {
+            var agent = await _context.DeliveryAgents.FindAsync(dto.AgentId);
+            if (agent == null) return false;
+
+            agent.UserId = dto.UserId;
+            agent.DocumentUrl = dto.DocumentUrl;
+            agent.Address = dto.Address;
+
+            _context.DeliveryAgents.Update(agent);
+            await _context.SaveChangesAsync();
+            return true;
         }
+
     }
+}
 
