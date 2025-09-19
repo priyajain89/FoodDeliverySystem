@@ -18,12 +18,12 @@ namespace FoodDelivery.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "restaurant")]
+        //[Authorize(Roles = "restaurant")]
         public async Task<IActionResult> Create(MenuItemDto dto)
         {
             var item = await _menuRepo.CreateAsync(dto, User);
             if (item == null)
-                return BadRequest("Invalid data or restaurant not verified.");
+                return Unauthorized("Invalid restaurant or not verified.");
 
             return CreatedAtAction(nameof(GetById), new { id = item.ItemId }, ToViewDto(item));
         }
@@ -84,8 +84,8 @@ namespace FoodDelivery.Api.Controllers
                 ItemId = item.ItemId,
                 Name = item.Name,
                 Description = item.Description,
-                Price = item.Price,
-                IsAvailable = item.IsAvailable,
+                Price = item.Price ?? 0m,
+                IsAvailable = item.IsAvailable ?? false,
                 Category = item.Category,
                 RestaurantName = item.Restaurant?.User?.Name,
                 FoodImage = item.FoodImage

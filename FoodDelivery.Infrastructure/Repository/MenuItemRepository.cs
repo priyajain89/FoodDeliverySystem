@@ -34,8 +34,13 @@ namespace FoodDelivery.Infrastructure.Repository
 
         public async Task<MenuItem?> CreateAsync(MenuItemDto dto, ClaimsPrincipal user)
         {
-            var restaurant = await GetVerifiedRestaurantAsync(user);
-            if (restaurant == null || !AllowedCategories.Contains(dto.Category)) return null;
+            var restaurantIdClaim = user.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            if (restaurantIdClaim == null) return null;
+
+            int restaurantId = int.Parse(restaurantIdClaim);
+            var restaurant = await _context.Restaurants.FindAsync(restaurantId);
+            if (restaurant == null || !restaurant.User.IsVerified.GetValueOrDefault()) return null;
+
 
             var item = new MenuItem
             {
@@ -50,6 +55,7 @@ namespace FoodDelivery.Infrastructure.Repository
 
             _context.MenuItems.Add(item);
             await _context.SaveChangesAsync();
+            item.Restaurant = restaurant;
             return item;
         }
 

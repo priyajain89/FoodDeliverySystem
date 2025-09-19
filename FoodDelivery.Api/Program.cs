@@ -19,6 +19,7 @@ namespace FoodDelivery.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 
 
             builder.Services.AddControllers();

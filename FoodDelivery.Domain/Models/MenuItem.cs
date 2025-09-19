@@ -22,6 +22,7 @@ public partial class MenuItem
     public decimal? Price { get; set; }
 
     public bool? IsAvailable { get; set; }
+    public string Category { get; set; } = string.Empty;
 
     public string? FoodImage { get; set; }
 
