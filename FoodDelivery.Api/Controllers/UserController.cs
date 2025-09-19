@@ -47,6 +47,7 @@ namespace FoodDelivery.Api.Controllers
                 Phone = dto.Phone,
                 Role = dto.Role,
                 IsVerified = dto.Role.ToLower() == "customer"
+                //IsVerified = dto.Role.Equals("Customer", StringComparison.OrdinalIgnoreCase)
             };
 
             var created = await _userRepository.CreateUserAsync(user);
