@@ -1,4 +1,4 @@
-﻿using FoodDelivery.Domain.Data;
+using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.Repository;
 using FoodDelivery.Infrastructure.Services;
@@ -108,3 +108,4 @@ namespace FoodDelivery.Infrastructure.Repository
 
     }
 }
+
