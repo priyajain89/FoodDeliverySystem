@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace FoodDelivery.Domain.Models;
 
@@ -25,9 +26,13 @@ public partial class DeliveryAgent
 
     public string? Address { get; set; }
 
+
+    [JsonIgnore]
     [InverseProperty("Agent")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
+
+    [JsonIgnore]
     [ForeignKey("UserId")]
     [InverseProperty("DeliveryAgents")]
     public virtual User? User { get; set; }

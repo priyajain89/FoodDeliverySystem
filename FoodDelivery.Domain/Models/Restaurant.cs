@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace FoodDelivery.Domain.Models;
 
@@ -33,15 +34,19 @@ public partial class Restaurant
     [StringLength(50)]
     public string? Longitude { get; set; }
 
+    [JsonIgnore]
+
     [InverseProperty("Restaurant")]
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
+    [JsonIgnore]
     [InverseProperty("Restaurant")]
     public virtual ICollection<MenuItem> MenuItems { get; set; } = new List<MenuItem>();
-
+    [JsonIgnore]
     [InverseProperty("Restaurant")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
+    [JsonIgnore]
     [ForeignKey("UserId")]
     [InverseProperty("Restaurants")]
     public virtual User? User { get; set; }
