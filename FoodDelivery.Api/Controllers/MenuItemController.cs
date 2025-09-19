@@ -10,86 +10,78 @@ namespace FoodDelivery.Api.Controllers
     [Route("api/[controller]")]
     public class MenuItemController : ControllerBase
     {
-        private readonly IMenuItemRepository _menuRepo;
+        private readonly IMenuItemRepository _repo;
 
-        public MenuItemController(IMenuItemRepository menuRepo)
+        public MenuItemController(IMenuItemRepository repo)
         {
-            _menuRepo = menuRepo;
+            _repo = repo;
         }
 
         [HttpPost]
-        //[Authorize(Roles = "restaurant")]
-        public async Task<IActionResult> Create(MenuItemDto dto)
+        [Authorize(Roles = "Restaurant")]
+        public async Task<IActionResult> Create([FromBody] MenuItemCreateDto dto)
         {
-            var item = await _menuRepo.CreateAsync(dto, User);
-            if (item == null)
-                return Unauthorized("Invalid restaurant or not verified.");
+            var userIdClaim = User.FindFirst("id")?.Value;
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized("Invalid token.");
 
-            return CreatedAtAction(nameof(GetById), new { id = item.ItemId }, ToViewDto(item));
+            var result = await _repo.CreateAsync(dto, userId);
+            if (result == null)
+                return BadRequest("Restaurant not verified or category invalid.");
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var result = await _repo.GetByIdAsync(id);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var items = await _menuRepo.GetAllAsync();
-            return Ok(items.Select(ToViewDto));
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var item = await _menuRepo.GetByIdAsync(id);
-            if (item == null) return NotFound();
-            return Ok(ToViewDto(item));
+            var result = await _repo.GetAllAsync();
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "restaurant")]
-        public async Task<IActionResult> Update(int id, MenuItemDto dto)
+        [Authorize(Roles = "Restaurant")]
+        public async Task<IActionResult> Update(int id, [FromBody] MenuItemUpdateDto dto)
         {
-            var item = await _menuRepo.UpdateAsync(id, dto, User);
-            if (item == null)
-                return Unauthorized("Invalid or unauthorized update.");
-
-            return Ok(ToViewDto(item));
+            var success = await _repo.UpdateAsync(id, dto);
+            if (!success)
+                return BadRequest("Update failed.");
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "restaurant")]
+        [Authorize(Roles = "Restaurant")]
         public async Task<IActionResult> Delete(int id)
         {
-            var success = await _menuRepo.DeleteAsync(id, User);
+            var success = await _repo.DeleteAsync(id);
             if (!success)
-                return Unauthorized("Invalid or unauthorized delete.");
-
-            return Ok("Deleted successfully.");
-        }
-
-        [HttpGet("search")]
-        public async Task<IActionResult> Search(
-            [FromQuery] string pinCode,
-            [FromQuery] string? restaurantName,
-            [FromQuery] string? itemName,
-            [FromQuery] string? category,
-            [FromQuery] string? city)
-        {
-            var items = await _menuRepo.SearchAsync(pinCode, restaurantName, itemName, category, city);
-            return Ok(items.Select(ToViewDto));
-        }
-
-        private MenuItemViewDto ToViewDto(MenuItem item)
-        {
-            return new MenuItemViewDto
-            {
-                ItemId = item.ItemId,
-                Name = item.Name,
-                Description = item.Description,
-                Price = item.Price ?? 0m,
-                IsAvailable = item.IsAvailable ?? false,
-                Category = item.Category,
-                RestaurantName = item.Restaurant?.User?.Name,
-                FoodImage = item.FoodImage
-            };
+                return NotFound();
+            return NoContent();
         }
     }
+
+
 }
+
+
+
+//[HttpGet("search")]
+//public async Task<IActionResult> Search(
+//           [FromQuery] string pinCode,
+//           [FromQuery] string? restaurantName,
+//           [FromQuery] string? itemName,
+//           [FromQuery] string? category,
+//           [FromQuery] string? city)
+//{
+//    var items = await _menuRepo.SearchAsync(pinCode, restaurantName, itemName, category, city);
+//    return Ok(items.Select(ToViewDto));
+//}

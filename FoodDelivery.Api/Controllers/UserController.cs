@@ -144,7 +144,7 @@ namespace FoodDelivery.Api.Controllers{
                 return Unauthorized("You are not a registered user.");
             }
 
-            if (user.IsVerified != null && user.IsVerified == true)
+            if (user.IsVerified != null && user.IsVerified == false)
             {
                 return Unauthorized("Your account is not verified. Please contact support.");
             }
