@@ -1,12 +1,13 @@
 
 using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
-using FoodDelivery.Infrastructure.Services;
 using FoodDelivery.Infrastructure.Repository;
+using FoodDelivery.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 
 
@@ -19,6 +20,7 @@ namespace FoodDelivery.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
 
             builder.Services.AddControllers();
@@ -61,7 +63,8 @@ namespace FoodDelivery.Api
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        //RoleClaimType = ClaimTypes.Role
                     };
                 });
             builder.Services.AddSwaggerGen(c =>

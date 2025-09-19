@@ -1,13 +1,8 @@
 ﻿using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
-using FoodDelivery.Infrastructure.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FoodDelivery.Infrastructure.Repository
 {
@@ -38,12 +33,11 @@ namespace FoodDelivery.Infrastructure.Repository
                 Landmark = a.Landmark,
                 IsDefault = a.IsDefault,
                 Latitude = a.Latitude,
-                Longitude = a.Longitude,
-                MainLabel = a.MainLabel
+                Longitude = a.Longitude
             });
         }
 
-        public async Task<AddressViewDto?> GetByIdForUserAsync(int addressId, int userId)
+        public async Task<AddressViewDto?> GetByUserIdForCustomerAsync(int addressId, int userId)
         {
             var address = await _context.Addresses
                 .FirstOrDefaultAsync(a => a.AddressId == addressId && a.UserId == userId);
@@ -62,8 +56,7 @@ namespace FoodDelivery.Infrastructure.Repository
                 Landmark = address.Landmark,
                 IsDefault = address.IsDefault,
                 Latitude = address.Latitude,
-                Longitude = address.Longitude,
-                MainLabel = address.MainLabel
+                Longitude = address.Longitude
             };
         }
 
@@ -86,13 +79,20 @@ namespace FoodDelivery.Infrastructure.Repository
                 State = dto.State,
                 PinCode = dto.PinCode,
                 Landmark = dto.Landmark,
-                IsDefault = dto.IsDefault,
-                Latitude = dto.Latitude,
-                Longitude = dto.Longitude,
-              
+                IsDefault = dto.IsDefault
+   
             };
 
             _context.Addresses.Add(address);
+
+            var dbUser = await _context.Users.Include(c => c.Addresses)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (dbUser != null)
+            {
+                dbUser.Addresses.Add(address);
+            }
+
             await _context.SaveChangesAsync();
 
             return new AddressViewDto
@@ -107,15 +107,35 @@ namespace FoodDelivery.Infrastructure.Repository
                 Landmark = address.Landmark,
                 IsDefault = address.IsDefault,
                 Latitude = address.Latitude,
-                Longitude = address.Longitude,
-                
+                Longitude = address.Longitude
             };
         }
 
-        public async Task UpdateAsync(Address address)
+        public async Task<bool> UpdateAsync(int addressId, AddressAddDto dto, ClaimsPrincipal user)
         {
-            _context.Addresses.Update(address);
+            var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == "id");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                return false;
+
+            var existingAddress = await _context.Addresses
+                .FirstOrDefaultAsync(a => a.AddressId == addressId && a.UserId == userId);
+
+            if (existingAddress == null)
+                return false;
+
+            existingAddress.AddressLine1 = dto.AddressLine1;
+            existingAddress.AddressLine2 = dto.AddressLine2;
+            existingAddress.City = dto.City;
+            existingAddress.State = dto.State;
+            existingAddress.PinCode = dto.PinCode;
+            existingAddress.Landmark = dto.Landmark;
+            existingAddress.IsDefault = dto.IsDefault;
+       
+
+            _context.Entry(existingAddress).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task DeleteAsync(int id)
@@ -123,6 +143,14 @@ namespace FoodDelivery.Infrastructure.Repository
             var address = await _context.Addresses.FindAsync(id);
             if (address != null)
             {
+                var dbUser = await _context.Users.Include(c => c.Addresses)
+                    .FirstOrDefaultAsync(c => c.UserId == address.UserId);
+
+                if (dbUser != null)
+                {
+                    dbUser.Addresses.Remove(address);
+                }
+
                 _context.Addresses.Remove(address);
                 await _context.SaveChangesAsync();
             }

@@ -85,6 +85,9 @@ namespace FoodDelivery.Api.Controllers{
 
                 IsVerified = dto.Role.ToLower() == "customer"
 
+      
+
+
             };
 
             var created = await _userRepository.CreateUserAsync(user);

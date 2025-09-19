@@ -16,9 +16,8 @@ namespace FoodDelivery.Infrastructure.DTO
         public string? PinCode { get; set; }
         public string? Landmark { get; set; }
         public bool? IsDefault { get; set; }
-        public string? Latitude { get; set; }
-        public string? Longitude { get; set; }
-        public string? MainLabel { get; set; }
+     
+
 
     }
 
@@ -36,7 +35,7 @@ namespace FoodDelivery.Infrastructure.DTO
         public bool? IsDefault { get; set; }
         public string? Latitude { get; set; }
         public string? Longitude { get; set; }
-        public string? MainLabel { get; set; }
+  
 
     }
 }

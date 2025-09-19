@@ -1,22 +1,16 @@
 ﻿using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FoodDelivery.Infrastructure.Repository
 {
-    public class IAddressRepository
+    public interface IAddressRepository
     {
-
+        //Task<IEnumerable<AddressViewDto>> GetAllByCustomerIdAsync(int userId);
         Task<IEnumerable<AddressViewDto>> GetAllByUserIdAsync(int userId);
-        Task<AddressViewDto?> GetByIdForUserAsync(int addressId, int userId);
+        Task<AddressViewDto?> GetByUserIdForCustomerAsync(int addressId, int userId);
         Task<AddressViewDto?> AddAddressAsync(AddressAddDto dto, ClaimsPrincipal user);
-        Task UpdateAsync(Address address);
+        Task<bool> UpdateAsync(int addressId, AddressAddDto dto, ClaimsPrincipal user);
         Task DeleteAsync(int id);
-
     }
 }
