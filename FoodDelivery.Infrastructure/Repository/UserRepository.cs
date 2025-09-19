@@ -1,19 +1,20 @@
 ﻿using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
+using FoodDelivery.Infrastructure.Repository;
+using FoodDelivery.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FoodDelivery.Infrastructure.Repository
 {
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
+        private readonly OtpService _otpService;
 
-        public UserRepository(AppDbContext context)
+        public UserRepository(AppDbContext context, OtpService otpService)
         {
             _context = context;
+            _otpService = otpService;
         }
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
@@ -21,7 +22,8 @@ namespace FoodDelivery.Infrastructure.Repository
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<User?> GetUserByIdAsync(int id)
+
         {
             return await _context.Users.FindAsync(id);
         }
@@ -31,6 +33,20 @@ namespace FoodDelivery.Infrastructure.Repository
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return user;
+        }
+
+        public async Task<User?> GetUserByEmailOrPhoneAsync(string email, string phone)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email || u.Phone == phone);
+        }
+
+
+        public async Task<IEnumerable<User>> GetUsersByRoleAsync(string role)
+        {
+            return await _context.Users
+                .Where(u => u.Role == role)
+                .ToListAsync();
         }
 
         public async Task<User> UpdateUserAsync(User user)
@@ -50,11 +66,45 @@ namespace FoodDelivery.Infrastructure.Repository
             return true;
         }
 
-        public async Task<IEnumerable<User>> GetUsersByRoleAsync(string role)
+        //OTP logic 
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return await _context.Users
-                .Where(u => u.Role == role)
-                .ToListAsync();
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
+
+        //private static readonly Dictionary<string, string> _otpStore = new();
+
+        public async Task<User> LoginAsync(string email)
+        {
+            var user = await _context.Users
+                                           .FirstOrDefaultAsync(r => r.Email == email);
+
+            if (user == null)
+            {
+                return null; // Not found or not verified
+            }
+
+
+            return user;
+        }
+        public async Task<string?> GenerateOtpAsync(string email)
+        {
+            var user = await GetUserByEmailAsync(email);
+            if (user == null) return null;
+
+            return await _otpService.GenerateOtpAsync(email);
+        }
+
+        public async Task<User?> VerifyOtpAsync(string email, string otp)
+        {
+            if (_otpService.VerifyOtp(email, otp))
+            {
+                return await GetUserByEmailAsync(email);
+            }
+
+            return null;
+        }
+
+
     }
 }
