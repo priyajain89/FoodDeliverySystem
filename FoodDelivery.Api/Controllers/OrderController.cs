@@ -11,10 +11,12 @@ namespace FoodDelivery.Api.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IBillService _assignmentService;
 
-        public OrderController(IOrderRepository orderRepository)
+        public OrderController(IOrderRepository orderRepository, IBillService assignmentService)
         {
             _orderRepository = orderRepository;
+            _assignmentService = assignmentService;
         }
 
 
@@ -50,6 +52,37 @@ namespace FoodDelivery.Api.Controllers
 
             return Ok(new { Message = "Address assigned to order." });
         }
+
+        [HttpPut("assign-agent/{orderId}")]
+  
+        public async Task<IActionResult> AssignAgentToOrder(int orderId)
+        {
+            try
+            {
+                var order = await _orderRepository.GetOrderByIdAsync(orderId);
+                if (order == null)
+                    return NotFound("Order not found.");
+
+                var agent = await _assignmentService.AssignNearestAgentAsync(order);
+
+                if (agent == null)
+                    return NotFound("No available delivery agents.");
+
+                await _orderRepository.UpdateOrderAsync(order); // Save agent assignment
+
+                return Ok(new
+                {
+                    Message = "Agent assigned to order.",
+                    AgentId = agent.AgentId,
+                    AgentName = agent.User?.Name ?? "Unknown"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
 
 
 

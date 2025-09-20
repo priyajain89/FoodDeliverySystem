@@ -8,6 +8,9 @@ namespace FoodDelivery.Infrastructure.DTO
 {
     public class BillDto
     {
+
+        public string AgentName { get; set; } = string.Empty;
+        public string RestaurantName { get; set; } = string.Empty;
         public double DistanceKm { get; set; }
         public double EstimatedTimeMinutes { get; set; }
         public double DeliveryCharge { get; set; }

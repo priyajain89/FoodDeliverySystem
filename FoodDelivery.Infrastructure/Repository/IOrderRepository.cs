@@ -1,4 +1,5 @@
-﻿using FoodDelivery.Infrastructure.DTO;
+﻿using FoodDelivery.Domain.Models;
+using FoodDelivery.Infrastructure.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,10 @@ namespace FoodDelivery.Infrastructure.Repository
 
         Task<int> CreateOrderFromCartAsync(int customerId, CreateOrderFromCartDto dto);
         Task<bool> AssignAddressToOrderAsync(AssignAddressToOrderDto dto);
+
+
+        Task<Order?> GetOrderByIdAsync(int orderId);
+        Task UpdateOrderAsync(Order order);
+
     }
 }

@@ -21,12 +21,23 @@ namespace FoodDelivery.Infrastructure.Repository
 
         public async Task<BillDto> GenerateBillFromOrderAsync(int orderId)
         {
+            //var order = await _context.Orders
+            //    .Include(o => o.OrderItems)
+            //        .ThenInclude(oi => oi.Item)
+            //    .Include(o => o.Address)
+            //    .Include(o => o.Restaurant)
+            //    .FirstOrDefaultAsync(o => o.OrderId == orderId);
             var order = await _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Item)
-                .Include(o => o.Address)
-                .Include(o => o.Restaurant)
-                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+    .Include(o => o.OrderItems)
+        .ThenInclude(oi => oi.Item)
+    .Include(o => o.Address)
+    .Include(o => o.Restaurant)
+        .ThenInclude(r => r.User) // <-- Add this line
+
+.Include(o => o.Agent)
+                .ThenInclude(a => a.User)
+    .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
 
             if (order == null || order.Address == null || order.Restaurant == null)
                 throw new Exception("Invalid order or missing address/restaurant.");
@@ -57,6 +68,8 @@ namespace FoodDelivery.Infrastructure.Repository
 
             return new BillDto
             {
+                AgentName = order.Agent.User?.Name ?? "Unknown",
+                RestaurantName = order.Restaurant.User?.Name ?? "Unknown",
                 DistanceKm = Math.Round(distanceKm, 2),
                 EstimatedTimeMinutes = Math.Round(estimatedTimeMinutes, 2),
                 DeliveryCharge = deliveryCharge,
@@ -77,7 +90,38 @@ namespace FoodDelivery.Infrastructure.Repository
             double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
             return R * c;
         }
+
+
+        public async Task<DeliveryAgent?> AssignNearestAgentAsync(Order order)
+        {
+            var restaurantLat = order.Restaurant.Latitude ?? 0;
+            var restaurantLon = order.Restaurant.Longitude ?? 0;
+
+            var availableAgents = await _context.DeliveryAgents
+                .Where(a => a.IsAvailable == true && a.Latitude != null && a.Longitude != null)
+                .ToListAsync();
+
+            var nearestAgent = availableAgents
+                .Select(agent => new
+                {
+                    Agent = agent,
+                    Distance = CalculateDistance(
+                        restaurantLat, restaurantLon,
+                        agent.Latitude.Value, agent.Longitude.Value)
+                })
+                .OrderBy(x => x.Distance)
+                .FirstOrDefault()?.Agent;
+
+            if (nearestAgent != null)
+            {
+                nearestAgent.IsAvailable = false;
+                order.AgentId = nearestAgent.AgentId;
+                await _context.SaveChangesAsync();
+            }
+
+            return nearestAgent;
+        }
+
+
     }
-
-
 }

@@ -1,6 +1,7 @@
 ﻿using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
+using FoodDelivery.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -9,17 +10,21 @@ namespace FoodDelivery.Infrastructure.Repository
     public class AddressRepository : IAddressRepository
     {
         private readonly AppDbContext _context;
+        private readonly IGeocodingService _geocodingService;
 
-        public AddressRepository(AppDbContext context)
+        public AddressRepository(AppDbContext context, IGeocodingService geocodingService)
         {
             _context = context;
+            _geocodingService = geocodingService;
         }
 
-        public async Task<IEnumerable<AddressViewDto>> GetAllByUserIdAsync(int userId)
+        public async Task<IEnumerable<AddressViewDto>> GetAllByUserIdAsync( int userId)
         {
             var addresses = await _context.Addresses
                 .Where(a => a.UserId == userId)
                 .ToListAsync();
+
+           
 
             return addresses.Select(a => new AddressViewDto
             {
@@ -70,6 +75,21 @@ namespace FoodDelivery.Infrastructure.Repository
 
             int userId = int.Parse(userIdClaim.Value);
 
+
+            var fullAddress = string.Join(", ", new[]
+            {
+    dto.AddressLine1,
+    dto.AddressLine2,
+    dto.Landmark,
+    dto.City,
+    dto.State,
+    dto.PinCode?.ToString()
+}.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+
+            // Get coordinates from geocoding service
+            var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
+
             var address = new Address
             {
                 UserId = userId,
@@ -79,8 +99,10 @@ namespace FoodDelivery.Infrastructure.Repository
                 State = dto.State,
                 PinCode = dto.PinCode,
                 Landmark = dto.Landmark,
-                IsDefault = dto.IsDefault
-   
+                IsDefault = dto.IsDefault,
+                Latitude = geoResult?.Latitude,
+                Longitude = geoResult?.Longitude
+
             };
 
             _context.Addresses.Add(address);

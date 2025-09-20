@@ -64,7 +64,7 @@ namespace FoodDelivery.Api.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> AddAddress(AddressAddDto dto)
         {
             var result = await _addressRepository.AddAddressAsync(dto, User);

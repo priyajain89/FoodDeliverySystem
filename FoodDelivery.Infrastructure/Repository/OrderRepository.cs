@@ -76,6 +76,21 @@ namespace FoodDelivery.Infrastructure.Repository
             return true;
         }
 
+        public async Task<Order?> GetOrderByIdAsync(int orderId)
+        {
+            return await _context.Orders
+                .Include(o => o.Restaurant)
+                .Include(o => o.Address)
+                .Include(o => o.Agent)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+        }
+
+        public async Task UpdateOrderAsync(Order order)
+        {
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+        }
+
 
 
 
