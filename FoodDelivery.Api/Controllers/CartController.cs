@@ -57,6 +57,7 @@ public class CartController : ControllerBase
         return Ok("Item added to cart.");
     }
 
+
     [HttpGet("customer-cart")]
     public async Task<IActionResult> GetCustomerCart()
     {

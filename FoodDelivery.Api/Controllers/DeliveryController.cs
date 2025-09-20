@@ -14,7 +14,7 @@ namespace FoodDelivery.Api.Controllers
 
         
             private readonly IDeliveryagentRepository _repo;
-        private readonly IGeocodingService _geocodingService;
+            private readonly IGeocodingService _geocodingService;
 
         public DeliveryController(IDeliveryagentRepository repo, IGeocodingService geocodingService)
             {
@@ -53,6 +53,7 @@ namespace FoodDelivery.Api.Controllers
 
 
         }
+
 
         [HttpPut("delivery-agent/update")]
         public async Task<IActionResult> UpdateDeliveryAgent([FromBody] DeliveryAgentResponseDto dto)

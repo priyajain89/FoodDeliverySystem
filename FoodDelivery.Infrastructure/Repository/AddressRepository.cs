@@ -78,16 +78,16 @@ namespace FoodDelivery.Infrastructure.Repository
 
             var fullAddress = string.Join(", ", new[]
             {
-    dto.AddressLine1,
-    dto.AddressLine2,
-    dto.Landmark,
-    dto.City,
-    dto.State,
-    dto.PinCode?.ToString()
-}.Where(x => !string.IsNullOrWhiteSpace(x)));
+                dto.AddressLine1,
+                dto.AddressLine2,
+                dto.Landmark,
+                dto.City,
+                dto.State,
+                dto.PinCode?.ToString()
+                }.Where(x => !string.IsNullOrWhiteSpace(x)));
 
 
-            // Get coordinates from geocoding service
+           
             var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
 
             var address = new Address

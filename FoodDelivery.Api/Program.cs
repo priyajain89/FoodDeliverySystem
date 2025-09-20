@@ -116,10 +116,7 @@ namespace FoodDelivery.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

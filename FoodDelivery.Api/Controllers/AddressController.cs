@@ -38,6 +38,7 @@ namespace FoodDelivery.Api.Controllers
             return Ok(addresses);
         }
 
+
         [HttpGet("{id}")]
         [Authorize(Roles = "customer")]
         public async Task<IActionResult> GetById(int id)
@@ -47,6 +48,7 @@ namespace FoodDelivery.Api.Controllers
             if (address == null) return NotFound();
             return Ok(address);
         }
+
 
         [HttpGet("my-addresses")]
         [Authorize(Roles = "customer")]
@@ -73,6 +75,7 @@ namespace FoodDelivery.Api.Controllers
 
             return Ok(result);
         }
+
 
         [HttpPut("{id}")]
         [Authorize(Roles = "customer")]

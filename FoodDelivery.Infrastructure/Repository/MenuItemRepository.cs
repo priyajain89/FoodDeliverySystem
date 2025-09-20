@@ -13,119 +13,68 @@ using System.Security.Claims;
 namespace FoodDelivery.Infrastructure.Repository
 
 {
-
     public class MenuItemRepository : IMenuItemRepository
-
     {
-
         private readonly AppDbContext _context;
-
         public MenuItemRepository(AppDbContext context)
-
         {
-
             _context = context;
-
         }
 
         public async Task<MenuItemViewDto?> CreateAsync(MenuItemCreateDto dto, int userId)
-
         {
-
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
-
             if (user == null || user.Role != "Restaurant" || user.IsVerified != true)
-
                 return null;
-
-
             var restaurant = await _context.Restaurants
-
                 .FirstOrDefaultAsync(r => r.UserId == userId);
 
             if (restaurant == null)
-
                 return null;
 
             if (!StaticCategories.Categories.Contains(dto.Category))
-
                 return null;
-
             var item = new MenuItem
-
             {
-
                 RestaurantId = restaurant.RestaurantId,
-
                 Name = dto.Name,
-
                 Description = dto.Description,
-
                 Price = dto.Price,
-
                 IsAvailable = dto.IsAvailable,
-
                 Category = dto.Category,
-
                 FoodImage = dto.FoodImage
-
             };
 
             _context.MenuItems.Add(item);
-
             await _context.SaveChangesAsync();
-
             return new MenuItemViewDto
-
             {
-
                 ItemId = item.ItemId,
-
                 Name = item.Name ?? string.Empty,
-
                 Description = item.Description,
-
                 Price = item.Price ?? 0,
-
                 IsAvailable = item.IsAvailable ?? false,
-
                 Category = item.Category,
-
                 FoodImage = item.FoodImage,
-
                 RestaurantId = restaurant.RestaurantId,
-
                 RestaurantName = user.Name ?? "Unknown"
-
             };
 
         }
-
-
         public async Task<MenuItemViewDto?> GetByIdAsync(int id)
 
         {
-
             var item = await _context.MenuItems.Include(m => m.Restaurant).FirstOrDefaultAsync(m => m.ItemId == id);
-
             return item == null ? null : ToViewDto(item, item.Restaurant?.User.Name ?? "Unknown");
-
         }
 
         public async Task<IEnumerable<MenuItemViewDto>> GetAllAsync()
-
         {
-
             var items = await _context.MenuItems.Include(m => m.Restaurant).ToListAsync();
-
             return items.Select(i => ToViewDto(i, i.Restaurant?.User.Name ?? "Unknown")).ToList();
-
         }
-
         public async Task<bool> UpdateAsync(int id, MenuItemUpdateDto dto)
-
         {
-
             var item = await _context.MenuItems.FindAsync(id);
 
             if (item == null || !StaticCategories.Categories.Contains(dto.Category))

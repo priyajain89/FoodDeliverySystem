@@ -17,27 +17,18 @@ namespace FoodDelivery.Api.Controllers
     [Route("api/[controller]")]
 
     public class MenuItemController : ControllerBase
-
     {
-
         private readonly IMenuItemRepository _repo;
-
         public MenuItemController(IMenuItemRepository repo)
-
         {
-
             _repo = repo;
-
         }
 
+
         [HttpPost]
-
         [Authorize(Roles = "Restaurant")]
-
         public async Task<IActionResult> Create([FromBody] MenuItemCreateDto dto)
-
         {
-
             var userIdClaim = User.FindFirst("id")?.Value;
 
             if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
@@ -55,67 +46,39 @@ namespace FoodDelivery.Api.Controllers
         }
 
         [HttpGet("{id}")]
-
         public async Task<IActionResult> Get(int id)
-
         {
-
             var result = await _repo.GetByIdAsync(id);
-
             if (result == null)
-
                 return NotFound();
-
             return Ok(result);
-
         }
 
         [HttpGet]
-
         public async Task<IActionResult> GetAll()
-
         {
-
             var result = await _repo.GetAllAsync();
-
             return Ok(result);
-
         }
 
         [HttpPut("{id}")]
-
         [Authorize(Roles = "Restaurant")]
-
         public async Task<IActionResult> Update(int id, [FromBody] MenuItemUpdateDto dto)
-
         {
-
             var success = await _repo.UpdateAsync(id, dto);
-
             if (!success)
-
                 return BadRequest("Update failed.");
-
             return NoContent();
-
         }
 
         [HttpDelete("{id}")]
-
         [Authorize(Roles = "Restaurant")]
-
         public async Task<IActionResult> Delete(int id)
-
         {
-
             var success = await _repo.DeleteAsync(id);
-
             if (!success)
-
                 return NotFound();
-
             return NoContent();
-
         }
 
     }
@@ -124,25 +87,4 @@ namespace FoodDelivery.Api.Controllers
 }
 
 
-//[HttpGet("search")]
-
-//public async Task<IActionResult> Search(
-
-//           [FromQuery] string pinCode,
-
-//           [FromQuery] string? restaurantName,
-
-//           [FromQuery] string? itemName,
-
-//           [FromQuery] string? category,
-
-//           [FromQuery] string? city)
-
-//{
-
-//    var items = await _menuRepo.SearchAsync(pinCode, restaurantName, itemName, category, city);
-
-//    return Ok(items.Select(ToViewDto));
-
-//}
 
