@@ -21,14 +21,21 @@ namespace FoodDelivery.Api
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+
             builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
             builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
-
             builder.Services.AddScoped<IDeliveryagentRepository, DeliveryagentRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IBillService, BillService>();
+            builder.Services.AddSingleton<OtpService>();
+
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddTransient<EmailService>();
 
 
 
@@ -48,19 +55,6 @@ namespace FoodDelivery.Api
                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
                 options.JsonSerializerOptions.WriteIndented = true;
                 });
-
-            builder.Services.AddSingleton<OtpService>();
-
-            builder.Services.Configure<EmailSettings>(
-
-                builder.Configuration.GetSection("EmailSettings"));
-
-
-            builder.Services.AddTransient<EmailService>();
-
-
-            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-            builder.Services.AddTransient<EmailService>();
 
 
 
@@ -83,6 +77,7 @@ namespace FoodDelivery.Api
                         //RoleClaimType = ClaimTypes.Role
                     };
                 });
+
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -112,8 +107,6 @@ namespace FoodDelivery.Api
              }
          });
             });
-
-
 
 
             var app = builder.Build();

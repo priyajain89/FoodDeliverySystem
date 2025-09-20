@@ -1,8 +1,9 @@
-﻿using FoodDelivery.Domain.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
 using FoodDelivery.Infrastructure.Repository;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDelivery.Api.Controllers
 {
@@ -21,9 +22,9 @@ namespace FoodDelivery.Api.Controllers
             _geocodingService = geocodingService;
         }
 
-            [HttpPost("submit")]
-            public async Task<IActionResult> SubmitDetails([FromBody] DeliveryAgentDTO dto)
-            {
+        [HttpPost("submit")]
+        public async Task<IActionResult> SubmitDetails([FromBody] DeliveryAgentDTO dto)
+        {
 
             var fullAddress = $"{dto.Address}";
 
@@ -31,35 +32,27 @@ namespace FoodDelivery.Api.Controllers
             var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
 
             var agent = new DeliveryAgent
-                {
-                    UserId = dto.UserId,
-                    DocumentUrl = dto.DocumentUrl,
-                    //Latitude = geoResult?.Latitude,
-                    //Longitude = geoResult?.Longitude
-                    Address = dto.Address
-                };
+            {
+                UserId = dto.UserId,
+                DocumentUrl = dto.DocumentUrl,
+                Latitude = geoResult?.Latitude,
+                Longitude = geoResult?.Longitude,
+                Address = dto.Address
+            };
 
-                try
-                {
-                    var result = await _repo.SubmitAgentDetailsAsync(agent);
-
-                    var response = new DeliveryAgentResponseDto
-                    {
-                        AgentId = result.AgentId,
-                        UserId = result.UserId ?? 0,
-                        DocumentUrl = result.DocumentUrl,
-                        Latitude = result.Latitude,
-                        Longitude = result.Longitude,
-                        Address = result.Address
-                    };
-
-                    return Ok(response);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
+            try
+            {
+                var result = await _repo.SubmitAgentDetailsAsync(agent);
+                return Ok(result);
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
+
+        }
 
         [HttpPut("delivery-agent/update")]
         public async Task<IActionResult> UpdateDeliveryAgent([FromBody] DeliveryAgentResponseDto dto)

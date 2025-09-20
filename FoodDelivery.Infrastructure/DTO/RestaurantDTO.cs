@@ -23,6 +23,19 @@ namespace FoodDelivery.Infrastructure.DTO
 
     public class RestaurantResponseDto
     {
+        
+        public int UserId { get; set; }
+        public string? Address { get; set; }
+        public string? FssaiId { get; set; }
+        public int? PinCode { get; set; }
+        public string? FssaiImage { get; set; }
+        public string? TradelicenseImage { get; set; }
+        public string? TradeId { get; set; }
+        
+    }
+
+    public class RestaurantIDDto
+    {
         public int RestaurantId { get; set; }
         public int UserId { get; set; }
         public string? Address { get; set; }
@@ -31,8 +44,7 @@ namespace FoodDelivery.Infrastructure.DTO
         public string? FssaiImage { get; set; }
         public string? TradelicenseImage { get; set; }
         public string? TradeId { get; set; }
-        public string? Latitude { get; set; }
-        public string? Longitude { get; set; }
+       
     }
 
 
