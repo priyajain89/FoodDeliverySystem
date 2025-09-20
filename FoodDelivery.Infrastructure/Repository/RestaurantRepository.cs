@@ -25,10 +25,10 @@ namespace FoodDelivery.Infrastructure.Repository
             return restaurant;
         }
 
-        public async Task<List<RestaurantResponseDto>> GetAllRestaurantsAsync()
+        public async Task<List<RestaurantIDDto>> GetAllRestaurantsAsync()
         {
             var restaurants = await _context.Restaurants
-                .Select(r => new RestaurantResponseDto
+                .Select(r => new RestaurantIDDto
                 {
                     RestaurantId = r.RestaurantId,
                     UserId = r.UserId ?? 0,
@@ -44,7 +44,7 @@ namespace FoodDelivery.Infrastructure.Repository
             return restaurants;
         }
 
-        public async Task<bool> UpdateRestaurantAsync(RestaurantResponseDto dto)
+        public async Task<bool> UpdateRestaurantAsync(RestaurantIDDto dto)
         {
             var restaurant = await _context.Restaurants.FindAsync(dto.RestaurantId);
             if (restaurant == null) return false;
@@ -60,8 +60,5 @@ namespace FoodDelivery.Infrastructure.Repository
             await _context.SaveChangesAsync();
             return true;
         }
-
-
-
     }
 }

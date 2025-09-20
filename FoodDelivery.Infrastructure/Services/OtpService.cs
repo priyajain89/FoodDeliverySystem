@@ -19,7 +19,7 @@ namespace FoodDelivery.Infrastructure.Services
             var otp = new Random().Next(100000, 999999).ToString();
             _otpStore[email] = otp;
 
-            _emailService.SendSimpleEmail(email, "Your OTP", $"Your OTP is: {otp}");
+            //_emailService.SendSimpleEmail(email, "Your OTP", $"Your OTP is: {otp}");
             Console.WriteLine($"Generated OTP for {email}: {otp}");
 
             return otp;

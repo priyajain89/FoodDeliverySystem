@@ -23,7 +23,6 @@ namespace FoodDelivery.Infrastructure.Repository
         }
 
         public async Task<User?> GetUserByIdAsync(int id)
-
         {
             return await _context.Users.FindAsync(id);
         }
@@ -72,21 +71,16 @@ namespace FoodDelivery.Infrastructure.Repository
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        //private static readonly Dictionary<string, string> _otpStore = new();
-
         public async Task<User> LoginAsync(string email)
         {
-            var user = await _context.Users
-                                           .FirstOrDefaultAsync(r => r.Email == email);
-
+            var user = await _context.Users.FirstOrDefaultAsync(r => r.Email == email);
             if (user == null)
             {
-                return null; // Not found or not verified
+                return null; 
             }
-
-
             return user;
         }
+      
         public async Task<string?> GenerateOtpAsync(string email)
         {
             var user = await GetUserByEmailAsync(email);
@@ -101,7 +95,6 @@ namespace FoodDelivery.Infrastructure.Repository
             {
                 return await GetUserByEmailAsync(email);
             }
-
             return null;
         }
 

@@ -20,17 +20,19 @@ namespace FoodDelivery.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-<<<<<<< HEAD
             builder.Services.AddScoped<IAddressRepository, AddressRepository>();
-=======
             builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
-
             builder.Services.AddScoped<IDeliveryagentRepository, DeliveryagentRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IBillService, BillService>();
+            builder.Services.AddSingleton<OtpService>();
 
->>>>>>> 67e8c165cbd6994db9fc642c79e4695b08f02e7f
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddTransient<EmailService>();
 
 
             builder.Services.AddControllers();
@@ -84,6 +86,7 @@ namespace FoodDelivery.Api
                         //RoleClaimType = ClaimTypes.Role
                     };
                 });
+
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

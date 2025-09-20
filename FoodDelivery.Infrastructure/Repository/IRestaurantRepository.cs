@@ -7,8 +7,8 @@ namespace FoodDelivery.Infrastructure.Repository
     public interface IRestaurantRepository
     {
         Task<Restaurant> SubmitRestaurantDetailsAsync(Restaurant restaurant);
-        Task<List<RestaurantResponseDto>> GetAllRestaurantsAsync();
+        Task<List<RestaurantIDDto>> GetAllRestaurantsAsync();
 
-        Task<bool> UpdateRestaurantAsync(RestaurantResponseDto dto);
+        Task<bool> UpdateRestaurantAsync(RestaurantIDDto dto);
     }
 }
