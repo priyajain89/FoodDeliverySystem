@@ -20,9 +20,9 @@ namespace FoodDelivery.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-<<<<<<< HEAD
+
             builder.Services.AddScoped<IAddressRepository, AddressRepository>();
-=======
+
             builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 
             builder.Services.AddScoped<IDeliveryagentRepository, DeliveryagentRepository>();
@@ -30,7 +30,6 @@ namespace FoodDelivery.Api
             builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();
 
->>>>>>> 67e8c165cbd6994db9fc642c79e4695b08f02e7f
 
 
             builder.Services.AddControllers();
