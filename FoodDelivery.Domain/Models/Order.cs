@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace FoodDelivery.Domain.Models;
 
@@ -28,24 +29,36 @@ public partial class Order
     [Column(TypeName = "datetime")]
     public DateTime? OrderDate { get; set; }
 
+    [JsonIgnore]
+
     [ForeignKey("AddressId")]
     [InverseProperty("Orders")]
     public virtual Address? Address { get; set; }
 
+
+    [JsonIgnore]
     [ForeignKey("AgentId")]
     [InverseProperty("Orders")]
     public virtual DeliveryAgent? Agent { get; set; }
 
+
+    [JsonIgnore]
     [InverseProperty("Order")]
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
+
+    [JsonIgnore]
     [InverseProperty("Order")]
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
+
+    [JsonIgnore]
     [ForeignKey("RestaurantId")]
     [InverseProperty("Orders")]
     public virtual Restaurant? Restaurant { get; set; }
 
+
+    [JsonIgnore]
     [ForeignKey("UserId")]
     [InverseProperty("Orders")]
     public virtual User? User { get; set; }
