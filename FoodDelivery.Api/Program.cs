@@ -1,12 +1,13 @@
 
 using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
-using FoodDelivery.Infrastructure.Services;
 using FoodDelivery.Infrastructure.Repository;
+using FoodDelivery.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 
 
@@ -19,6 +20,9 @@ namespace FoodDelivery.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+<<<<<<< HEAD
+            builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+=======
             builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 
             builder.Services.AddScoped<IDeliveryagentRepository, DeliveryagentRepository>();
@@ -26,6 +30,7 @@ namespace FoodDelivery.Api
             builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();
 
+>>>>>>> 67e8c165cbd6994db9fc642c79e4695b08f02e7f
 
 
             builder.Services.AddControllers();
@@ -75,7 +80,8 @@ namespace FoodDelivery.Api
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        //RoleClaimType = ClaimTypes.Role
                     };
                 });
             builder.Services.AddSwaggerGen(c =>
