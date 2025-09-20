@@ -46,7 +46,7 @@ namespace FoodDelivery.Api
                 });
 
             builder.Services.AddSingleton<OtpService>();
-
+            
             builder.Services.Configure<EmailSettings>(
 
                 builder.Configuration.GetSection("EmailSettings"));
@@ -109,8 +109,6 @@ namespace FoodDelivery.Api
             });
 
 
-
-
             var app = builder.Build();
 
 
@@ -122,6 +120,7 @@ namespace FoodDelivery.Api
             }
 
             app.UseHttpsRedirection();
+            
 
             app.UseAuthorization();
 

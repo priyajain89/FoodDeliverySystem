@@ -67,21 +67,28 @@ namespace FoodDelivery.Api.Controllers
                 return NotFound();
             return NoContent();
         }
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(
+         [FromQuery] string pinCode,
+         [FromQuery] string? restaurantName,
+         [FromQuery] string? itemName,
+         [FromQuery] string? category,
+         [FromQuery] string? city)
+        {
+            var items = await _repo.SearchAsync(pinCode, restaurantName, itemName, category, city);
+            return Ok(items.Select(item => new MenuItemViewDto
+            {
+                ItemId = item.ItemId,
+                Name = item.Name ?? string.Empty,
+                Description = item.Description,
+                Price = item.Price ?? 0,
+                IsAvailable = item.IsAvailable ?? false,
+                Category = item.Category,
+                FoodImage = item.FoodImage,
+                RestaurantName = item.Restaurant?.User?.Name ?? "Unknown",
+            }));
+        }
+
     }
-
-
 }
 
-
-
-//[HttpGet("search")]
-//public async Task<IActionResult> Search(
-//           [FromQuery] string pinCode,
-//           [FromQuery] string? restaurantName,
-//           [FromQuery] string? itemName,
-//           [FromQuery] string? category,
-//           [FromQuery] string? city)
-//{
-//    var items = await _menuRepo.SearchAsync(pinCode, restaurantName, itemName, category, city);
-//    return Ok(items.Select(ToViewDto));
-//}
