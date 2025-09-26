@@ -7,12 +7,10 @@ namespace FoodDelivery.Infrastructure.Repository
     public class AdminRepository : IAdminRepository
     {
         private readonly AppDbContext _context;
-
         public AdminRepository(AppDbContext context)
         {
             _context = context;
         }
-
         public async Task<IEnumerable<User>> GetUnverifiedRestaurantsAsync()
         {
             return await _context.Users

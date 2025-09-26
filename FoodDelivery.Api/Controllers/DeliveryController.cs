@@ -11,10 +11,8 @@ namespace FoodDelivery.Api.Controllers
     [ApiController]
     public class DeliveryController : ControllerBase
     {
-
-        
             private readonly IDeliveryagentRepository _repo;
-        private readonly IGeocodingService _geocodingService;
+            private readonly IGeocodingService _geocodingService;
 
         public DeliveryController(IDeliveryagentRepository repo, IGeocodingService geocodingService)
             {
@@ -25,10 +23,7 @@ namespace FoodDelivery.Api.Controllers
         [HttpPost("submit")]
         public async Task<IActionResult> SubmitDetails([FromBody] DeliveryAgentDTO dto)
         {
-
             var fullAddress = $"{dto.Address}";
-
-            // Get coordinates from geocoding service
             var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
 
             var agent = new DeliveryAgent
@@ -39,19 +34,14 @@ namespace FoodDelivery.Api.Controllers
                 Longitude = geoResult?.Longitude,
                 Address = dto.Address
             };
+            var result = await _repo.SubmitAgentDetailsAsync(agent);
 
-            try
+            if (result == null)
             {
-                var result = await _repo.SubmitAgentDetailsAsync(agent);
-                return Ok(result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
+                return BadRequest("Invalid restaurant user.");
             }
 
-
-
+            return Ok(result);
         }
 
         [HttpPut("delivery-agent/update")]
@@ -61,9 +51,6 @@ namespace FoodDelivery.Api.Controllers
             if (!result) return NotFound("Delivery agent not found.");
             return Ok("Delivery agent updated successfully.");
         }
-
-
-
     }
 }
 

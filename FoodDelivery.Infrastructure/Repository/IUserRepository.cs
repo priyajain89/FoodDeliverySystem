@@ -1,4 +1,3 @@
-
 ﻿using FoodDelivery.Domain.Models;
 
 namespace FoodDelivery.Infrastructure.Repository
@@ -13,14 +12,6 @@ namespace FoodDelivery.Infrastructure.Repository
         Task<User> CreateUserAsync(User user);
         Task<User> UpdateUserAsync(User user);
         Task<bool> DeleteUserAsync(int id);
-
-
-        // OTP-related methods
-        Task<User> LoginAsync(string email);
-        Task<string?> GenerateOtpAsync(string email);
-        Task<User?> VerifyOtpAsync(string email, string otp);
-
-
     }
 }
 

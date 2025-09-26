@@ -26,7 +26,7 @@ public class CartController : ControllerBase
 
         var user = await _cartRepository.GetUserByIdAsync(customerId);
         if (user == null || user.Role?.ToLower() != "customer")
-            return Unauthorized("Only verified customers can add items to cart.");
+            return Unauthorized("Only customers can add items to cart.");
 
         var menuItem = await _cartRepository.GetMenuItemByIdAsync(dto.ItemId);
         if (menuItem == null)
@@ -52,24 +52,48 @@ public class CartController : ControllerBase
             Quantity = dto.Quantity
         };
 
-        await _cartRepository.AddCartItemAsync(cartItem);
+        var savedItem = await _cartRepository.AddCartItemAsync(cartItem);
 
-        return Ok("Item added to cart.");
+        return Ok(new
+        {
+            CartId = savedItem.CartId,
+            Message = "Item added to cart.",
+            CartItemId = savedItem.CartItemId
+        });
     }
 
-    [HttpGet("customer-cart")]
-    public async Task<IActionResult> GetCustomerCart()
+    [HttpGet("customer-carts")]
+    public async Task<IActionResult> GetCustomerCarts()
     {
         var customerIdClaim = User.FindFirst("id")?.Value;
         if (string.IsNullOrEmpty(customerIdClaim))
             return Unauthorized("CustomerId not found in token.");
 
         var customerId = int.Parse(customerIdClaim);
-        var cart = await _cartRepository.GetCartWithItemsAsync(customerId);
+        var carts = await _cartRepository.GetAllCartsWithItemsAsync(customerId);
 
-        if (cart == null)
-            return NotFound("Cart not found.");
+        if (carts == null || !carts.Any())
+            return NotFound("No carts found.");
 
-        return Ok(cart);
+        var result = carts.Select(cart => new CartViewDto
+        {
+            CartId = cart.CartId,
+            CustomerId = cart.UserId ?? 0,
+            RestaurantId = cart.RestaurantId ?? 0,
+            RestaurantName = cart.Restaurant?.User?.Name ?? "Unknown",
+            Items = cart.CartItems.Select(ci => new CartItemDto
+            {
+                ItemId = ci.ItemId ?? 0,
+                Name = ci.Item?.Name ?? string.Empty,
+                Description = ci.Item?.Description,
+                Price = ci.Item?.Price ?? 0,
+                Quantity = ci.Quantity ?? 0,
+                Category = ci.Item?.Category,
+                FoodImage = ci.Item?.FoodImage
+            }).ToList()
+        }).ToList();
+
+        return Ok(result);
     }
+
 }

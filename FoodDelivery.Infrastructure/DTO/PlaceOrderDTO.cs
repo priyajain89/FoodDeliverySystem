@@ -11,19 +11,15 @@ namespace FoodDelivery.Infrastructure.DTO
         public int CustomerId { get; set; }
         public int AddressId { get; set; }
         public int CartId { get; set; }
-        public string PaymentMethod { get; set; } // e.g., "COD", "Online"
+        public string PaymentMethod { get; set; } 
     }
     public class CreateOrderFromCartDto
     {
         public int CartId { get; set; }
     }
-
     public class AssignAddressToOrderDto
     {
         public int OrderId { get; set; }
         public int AddressId { get; set; }
     }
-
-
-
 }

@@ -10,6 +10,7 @@ namespace FoodDelivery.Domain.Models;
 public partial class CartItem
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CartItemId { get; set; }
 
     public int? CartId { get; set; }

@@ -21,7 +21,6 @@ namespace FoodDelivery.Infrastructure.Repository
             _geocodingService = geocodingService;
         }
 
-
         public async Task<int> CreateOrderFromCartAsync(int customerId, CreateOrderFromCartDto dto)
         {
             Console.WriteLine($"customer id is {customerId}");

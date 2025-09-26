@@ -12,9 +12,8 @@ namespace FoodDelivery.Infrastructure.Repository
         {
             _context = context;
         }
-
        
-            public async Task<DeliveryAgent> SubmitAgentDetailsAsync(DeliveryAgent agent)
+        public async Task<DeliveryAgent> SubmitAgentDetailsAsync(DeliveryAgent agent)
             {
                 var user = await _context.Users.FindAsync(agent.UserId);
                 if (user == null || user.Role?.ToLower() != "deliveryagent")

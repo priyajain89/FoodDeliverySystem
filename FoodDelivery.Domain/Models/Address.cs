@@ -10,7 +10,6 @@ public partial class Address
 {
     [Key]
     public int AddressId { get; set; }
-
     public int? UserId { get; set; }
 
     [StringLength(255)]
@@ -27,12 +26,9 @@ public partial class Address
 
     [StringLength(10)]
     public string? PinCode { get; set; }
-
     [StringLength(255)]
     public string? Landmark { get; set; }
-
     public bool? IsDefault { get; set; }
-
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
 

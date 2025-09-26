@@ -24,7 +24,6 @@ namespace FoodDelivery.Infrastructure.DTO
         public string Category { get; set; } = string.Empty;
         public string? FoodImage { get; set; }
     }
-
     public class MenuItemViewDto
     {
         public int ItemId { get; set; }
@@ -37,5 +36,4 @@ namespace FoodDelivery.Infrastructure.DTO
         public int RestaurantId { get; set; }
         public string RestaurantName { get; set; } = string.Empty;
     }
-
 }

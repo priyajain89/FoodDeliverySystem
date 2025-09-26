@@ -8,7 +8,6 @@ namespace FoodDelivery.Infrastructure.Repository
     {
         Task<Restaurant> SubmitRestaurantDetailsAsync(Restaurant restaurant);
         Task<List<RestaurantIDDto>> GetAllRestaurantsAsync();
-
         Task<bool> UpdateRestaurantAsync(RestaurantIDDto dto);
     }
 }

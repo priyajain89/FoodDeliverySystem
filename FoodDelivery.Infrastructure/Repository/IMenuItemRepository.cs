@@ -17,8 +17,5 @@ namespace FoodDelivery.Infrastructure.Repository
             Task<IEnumerable<MenuItemViewDto>> GetAllAsync();
             Task<bool> UpdateAsync(int id, MenuItemUpdateDto dto);
             Task<bool> DeleteAsync(int id);
-
-       
     }
-
 }

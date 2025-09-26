@@ -8,7 +8,6 @@ namespace FoodDelivery.Infrastructure.Repository
     public class RestaurantRepository : IRestaurantRepository
     {
         private readonly AppDbContext _context;
-
         public RestaurantRepository(AppDbContext context)
         {
             _context = context;

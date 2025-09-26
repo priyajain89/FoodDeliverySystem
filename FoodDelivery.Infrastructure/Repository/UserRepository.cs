@@ -10,7 +10,6 @@ namespace FoodDelivery.Infrastructure.Repository
     {
         private readonly AppDbContext _context;
         private readonly OtpService _otpService;
-
         public UserRepository(AppDbContext context, OtpService otpService)
         {
             _context = context;
@@ -40,7 +39,6 @@ namespace FoodDelivery.Infrastructure.Repository
                 .FirstOrDefaultAsync(u => u.Email == email || u.Phone == phone);
         }
 
-
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(string role)
         {
             return await _context.Users
@@ -63,39 +61,11 @@ namespace FoodDelivery.Infrastructure.Repository
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
-        }
+        }     
 
-        //OTP logic 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        }
-
-        public async Task<User> LoginAsync(string email)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(r => r.Email == email);
-            if (user == null)
-            {
-                return null; 
-            }
-            return user;
-        }
-      
-        public async Task<string?> GenerateOtpAsync(string email)
-        {
-            var user = await GetUserByEmailAsync(email);
-            if (user == null) return null;
-
-            return await _otpService.GenerateOtpAsync(email);
-        }
-
-        public async Task<User?> VerifyOtpAsync(string email, string otp)
-        {
-            if (_otpService.VerifyOtp(email, otp))
-            {
-                return await GetUserByEmailAsync(email);
-            }
-            return null;
         }
 
 
