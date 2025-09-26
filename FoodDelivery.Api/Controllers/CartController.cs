@@ -92,8 +92,6 @@ public class CartController : ControllerBase
                 FoodImage = ci.Item?.FoodImage
             }).ToList()
         }).ToList();
-
         return Ok(result);
     }
-
 }
