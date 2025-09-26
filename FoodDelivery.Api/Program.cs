@@ -1,12 +1,13 @@
 
 using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
-using FoodDelivery.Infrastructure.Services;
 using FoodDelivery.Infrastructure.Repository;
+using FoodDelivery.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 
 
@@ -19,11 +20,23 @@ namespace FoodDelivery.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+            builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+            builder.Services.AddScoped<IDeliveryagentRepository, DeliveryagentRepository>();
+            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+            builder.Services.AddHttpClient<IGeocodingService, GeocodingService>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IBillService, BillService>();
+            builder.Services.AddSingleton<OtpService>();
+
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddTransient<EmailService>();
 
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGen(c =>
@@ -31,18 +44,13 @@ namespace FoodDelivery.Api
                 c.UseInlineDefinitionsForEnums();
             });
 
-            builder.Services.AddSingleton<OtpService>();
 
-            builder.Services.Configure<EmailSettings>(
-
-                builder.Configuration.GetSection("EmailSettings"));
-
-
-            builder.Services.AddTransient<EmailService>();
-
-
-            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-            builder.Services.AddTransient<EmailService>();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.WriteIndented = true;
+                });
 
 
 
@@ -61,9 +69,11 @@ namespace FoodDelivery.Api
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        //RoleClaimType = ClaimTypes.Role
                     };
                 });
+
             builder.Services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -95,8 +105,8 @@ namespace FoodDelivery.Api
             });
 
 
-
             var app = builder.Build();
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -106,10 +116,7 @@ namespace FoodDelivery.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

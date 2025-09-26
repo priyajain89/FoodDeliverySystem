@@ -66,13 +66,13 @@ namespace FoodDelivery.Infrastructure.Repository
             return true;
         }
 
-        //OTP logic 
+        
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        //private static readonly Dictionary<string, string> _otpStore = new();
+       
 
         public async Task<User> LoginAsync(string email)
         {
@@ -81,7 +81,7 @@ namespace FoodDelivery.Infrastructure.Repository
 
             if (user == null)
             {
-                return null; // Not found or not verified
+                return null; 
             }
 
 
