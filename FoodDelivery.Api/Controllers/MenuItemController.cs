@@ -45,21 +45,38 @@ namespace FoodDelivery.Api.Controllers
 
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            var result = await _repo.GetByIdAsync(id);
-            if (result == null)
-                return NotFound();
-            return Ok(result);
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var result = await _repo.GetAllAsync();
             return Ok(result);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(
+
+              [FromQuery] string pinCode,
+              [FromQuery] string? restaurantName,
+              [FromQuery] string? itemName,             
+              [FromQuery] string? category,
+              [FromQuery] string? city)
+
+        {
+            var items = await _repo.SearchAsync(pinCode, restaurantName, itemName, category, city);
+            return Ok(items.Select(item => new MenuItemViewDto
+            {
+                ItemId = item.ItemId,
+                Name = item.Name ?? string.Empty,
+                Description = item.Description,
+                Price = item.Price ?? 0,
+                IsAvailable = item.IsAvailable ?? false,
+                Category = item.Category,
+                FoodImage = item.FoodImage,
+                RestaurantName = item.Restaurant?.User?.Name ?? "Unknown",
+            }));
+
+        }
+
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Restaurant")]

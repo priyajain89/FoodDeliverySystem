@@ -17,7 +17,7 @@ namespace FoodDelivery.Infrastructure.Repository
         {
             return await _context.Users
                 .Where(u => u.Role == "Restaurant" && u.IsVerified == false)
-                .Where(u => u.Restaurants.Any()) // Only those who submitted details
+                .Where(u => u.Restaurants.Any()) 
                 .Include(u => u.Restaurants)
                 .ToListAsync();
         }
@@ -26,7 +26,7 @@ namespace FoodDelivery.Infrastructure.Repository
         {
             return await _context.Users
                 .Where(u => u.Role == "DeliveryAgent" && u.IsVerified == false)
-                .Where(u => u.DeliveryAgents.Any()) // Only those who submitted details
+                .Where(u => u.DeliveryAgents.Any()) 
                 .Include(u => u.DeliveryAgents)
                 .ToListAsync();
         }

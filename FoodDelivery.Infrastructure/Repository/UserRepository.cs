@@ -74,36 +74,7 @@ namespace FoodDelivery.Infrastructure.Repository
 
        
 
-        public async Task<User> LoginAsync(string email)
-        {
-            var user = await _context.Users
-                                           .FirstOrDefaultAsync(r => r.Email == email);
-
-            if (user == null)
-            {
-                return null; 
-            }
-
-
-            return user;
-        }
-        public async Task<string?> GenerateOtpAsync(string email)
-        {
-            var user = await GetUserByEmailAsync(email);
-            if (user == null) return null;
-
-            return await _otpService.GenerateOtpAsync(email);
-        }
-
-        public async Task<User?> VerifyOtpAsync(string email, string otp)
-        {
-            if (_otpService.VerifyOtp(email, otp))
-            {
-                return await GetUserByEmailAsync(email);
-            }
-
-            return null;
-        }
+      
 
 
     }

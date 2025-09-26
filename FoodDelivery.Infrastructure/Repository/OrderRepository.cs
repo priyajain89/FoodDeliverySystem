@@ -14,18 +14,23 @@ namespace FoodDelivery.Infrastructure.Repository
     {
         private readonly AppDbContext _context;
         private readonly IGeocodingService _geocodingService;
+        private readonly IAddressRepository _addressRepo;
 
-        public OrderRepository(IGeocodingService geocodingService, AppDbContext context)
+        public OrderRepository(IGeocodingService geocodingService, AppDbContext context, IAddressRepository addressRepo)
         {
             _context = context;
             _geocodingService = geocodingService;
+
+            _addressRepo = addressRepo;
+        
+
+             
         }
 
 
         public async Task<int> CreateOrderFromCartAsync(int customerId, CreateOrderFromCartDto dto)
         {
-            Console.WriteLine($"customer id is {customerId}");
-            Console.WriteLine($"cart id is {dto.CartId}");
+
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                     .ThenInclude(ci => ci.Item)
@@ -70,7 +75,7 @@ namespace FoodDelivery.Infrastructure.Repository
             if (order == null) return false;
 
             order.AddressId = dto.AddressId;
-            order.Status = "ReadyForDelivery";
+            order.Status = "place order";
 
             await _context.SaveChangesAsync();
             return true;
@@ -89,6 +94,45 @@ namespace FoodDelivery.Infrastructure.Repository
         {
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<DeliveryOrderSummaryDto>> GetOrdersForAgentAsync(int agentId)
+        {
+            var orders = await _context.Orders
+                .Include(o => o.User) // Customer
+                .Include(o => o.Restaurant)
+                    .ThenInclude(r => r.User) // Restaurant Owner
+                .Where(o => o.AgentId == agentId)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            var result = new List<DeliveryOrderSummaryDto>();
+
+            foreach (var order in orders)
+            {
+                string fullAddress = "Unknown";
+
+                if (order.AddressId.HasValue && order.UserId != 0)
+                {
+                    var addressDto = await _addressRepo.GetByUserIdForCustomerAsync(order.AddressId.Value, order.UserId.Value);
+                    if (addressDto != null)
+                    {
+                        fullAddress = $"{addressDto.AddressLine1}, {addressDto.AddressLine2}, {addressDto.Landmark}, {addressDto.City}, {addressDto.State}, {addressDto.PinCode}";
+                    }
+                }
+
+                result.Add(new DeliveryOrderSummaryDto
+                {
+                    OrderId = order.OrderId,
+                    CustomerName = order.User?.Name ?? "Unknown",
+                    CustomerAddress = fullAddress,
+                    RestaurantName = order.Restaurant?.User?.Name ?? "Unknown",
+                    Status = order.Status,
+                    
+                });
+            }
+
+            return result;
         }
 
 

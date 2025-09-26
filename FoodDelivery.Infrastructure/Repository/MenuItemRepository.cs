@@ -61,17 +61,26 @@ namespace FoodDelivery.Infrastructure.Repository
             };
 
         }
-        public async Task<MenuItemViewDto?> GetByIdAsync(int id)
-
-        {
-            var item = await _context.MenuItems.Include(m => m.Restaurant).FirstOrDefaultAsync(m => m.ItemId == id);
-            return item == null ? null : ToViewDto(item, item.Restaurant?.User.Name ?? "Unknown");
-        }
 
         public async Task<IEnumerable<MenuItemViewDto>> GetAllAsync()
         {
-            var items = await _context.MenuItems.Include(m => m.Restaurant).ToListAsync();
-            return items.Select(i => ToViewDto(i, i.Restaurant?.User.Name ?? "Unknown")).ToList();
+
+            var items = await _context.MenuItems
+                                      .Include(m => m.Restaurant)
+                                      .ThenInclude(r => r.User)
+                                      .ToListAsync();
+
+            //return items.Select(i => ToViewDto(i, i.Restaurant?.User?.Name ?? "Unknown")).ToList();
+
+            return items.Select(i => new MenuItemViewDto
+            {
+                ItemId = i.ItemId,
+                Name = i.Name,
+                RestaurantId = i.RestaurantId ?? 0,
+                RestaurantName = i.Restaurant?.User?.Name ?? "Unknown"
+            }).ToList();
+
+
         }
         public async Task<bool> UpdateAsync(int id, MenuItemUpdateDto dto)
         {
@@ -143,44 +152,47 @@ namespace FoodDelivery.Infrastructure.Repository
 
         }
 
+        public async Task<IEnumerable<MenuItem>> SearchAsync(string pinCode, string? restaurantName, string? itemName, string? category, string? city)
+
+        {
+
+            var query = _context.MenuItems
+
+                .Include(m => m.Restaurant)
+
+                .ThenInclude(r => r.User)
+
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pinCode))
+
+                query = query.Where(m => m.Restaurant.PinCode.ToString() == pinCode);
+
+            if (!string.IsNullOrWhiteSpace(restaurantName))
+
+                query = query.Where(m => m.Restaurant.User.Name.Contains(restaurantName));
+
+            if (!string.IsNullOrWhiteSpace(itemName))
+
+                query = query.Where(m => m.Name != null && m.Name.Contains(itemName));
+
+            if (!string.IsNullOrWhiteSpace(category))
+
+                query = query.Where(m => m.Category == category);
+
+            if (!string.IsNullOrWhiteSpace(city))
+
+                query = query.Where(m => m.Restaurant.Address != null && m.Restaurant.Address.Contains(city));
+
+            return await query.ToListAsync();
+
+        }
+
+
     }
 
 }
 
 
 
-//public async Task<IEnumerable<MenuItem>> SearchAsync(string pinCode, string? restaurantName, string? itemName, string? category, string? city)
 
-//{
-
-//    var query = _context.MenuItems
-
-//        .Include(m => m.Restaurant)
-
-//        .ThenInclude(r => r.User)
-
-//        .AsQueryable();
-
-//    if (!string.IsNullOrEmpty(pinCode))
-
-//        query = query.Where(m => m.Restaurant.PinCode.ToString() == pinCode);
-
-//    if (!string.IsNullOrEmpty(restaurantName))
-
-//        query = query.Where(m => m.Restaurant.User.Name.Contains(restaurantName));
-
-//    if (!string.IsNullOrEmpty(itemName))
-
-//        query = query.Where(m => m.Name.Contains(itemName));
-
-//    if (!string.IsNullOrEmpty(category))
-
-//        query = query.Where(m => m.Category == category);
-
-//    if (!string.IsNullOrEmpty(city))
-
-//        query = query.Where(m => m.Restaurant.Address != null && m.Restaurant.Address.Contains(city));
-
-//    return await query.ToListAsync();
-
-//}

@@ -92,6 +92,7 @@ namespace FoodDelivery.Infrastructure.Repository
             var restaurantLon = order.Restaurant.Longitude ?? 0;
 
             var availableAgents = await _context.DeliveryAgents
+                .Include(a => a.User)
                 .Where(a => a.IsAvailable == true && a.Latitude != null && a.Longitude != null)
                 .ToListAsync();
 

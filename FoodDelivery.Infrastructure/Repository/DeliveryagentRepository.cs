@@ -39,6 +39,19 @@ namespace FoodDelivery.Infrastructure.Repository
             return true;
         }
 
+
+        public async Task<bool> MarkAgentAvailableAsync(int agentId)
+        {
+            var agent = await _context.DeliveryAgents.FindAsync(agentId);
+            if (agent == null) return false;
+
+            agent.IsAvailable = true;
+            _context.DeliveryAgents.Update(agent);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
     }
 }
 
