@@ -1,11 +1,11 @@
 ﻿using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
-using FoodDelivery.Infrastructure.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FoodDelivery.Infrastructure.Repository
@@ -21,8 +21,11 @@ namespace FoodDelivery.Infrastructure.Repository
             _geocodingService = geocodingService;
         }
 
+
         public async Task<int> CreateOrderFromCartAsync(int customerId, CreateOrderFromCartDto dto)
         {
+            Console.WriteLine($"customer id is {customerId}");
+            Console.WriteLine($"cart id is {dto.CartId}");
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                     .ThenInclude(ci => ci.Item)
@@ -36,7 +39,7 @@ namespace FoodDelivery.Infrastructure.Repository
                 UserId = customerId,
                 RestaurantId = cart.CartItems.First().Item?.RestaurantId,
                 OrderDate = DateTime.UtcNow,
-                Status = OrderEnums.OrderStatus.Pending.ToString(), // Enum used as string
+                Status = "PendingAddress",
                 TotalAmount = cart.CartItems.Sum(i => i.Quantity * (i.Item?.Price ?? 0))
             };
 
@@ -60,13 +63,14 @@ namespace FoodDelivery.Infrastructure.Repository
             return order.OrderId;
         }
 
+
         public async Task<bool> AssignAddressToOrderAsync(AssignAddressToOrderDto dto)
         {
             var order = await _context.Orders.FindAsync(dto.OrderId);
             if (order == null) return false;
 
             order.AddressId = dto.AddressId;
-            order.Status = OrderEnums.OrderStatus.ReadyForPickup.ToString(); // Enum used as string
+            order.Status = "ReadyForDelivery";
 
             await _context.SaveChangesAsync();
             return true;
@@ -86,5 +90,11 @@ namespace FoodDelivery.Infrastructure.Repository
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }
+
+
+
+
+
+
     }
 }

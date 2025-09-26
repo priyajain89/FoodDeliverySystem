@@ -1,10 +1,8 @@
 ﻿using FoodDelivery.Infrastructure.DTO;
-using FoodDelivery.Infrastructure.Enums;
 using FoodDelivery.Infrastructure.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace FoodDelivery.Api.Controllers
 {
@@ -21,6 +19,7 @@ namespace FoodDelivery.Api.Controllers
             _assignmentService = assignmentService;
         }
 
+
         [HttpPost("create-from-cart")]
         [Authorize]
         public async Task<IActionResult> CreateOrderFromCart([FromBody] CreateOrderFromCartDto dto)
@@ -34,18 +33,14 @@ namespace FoodDelivery.Api.Controllers
                 var customerId = int.Parse(customerIdClaim);
 
                 var orderId = await _orderRepository.CreateOrderFromCartAsync(customerId, dto);
-                return Ok(new
-                {
-                    OrderId = orderId,
-                    Status = OrderEnums.OrderStatus.Pending.ToString(),
-                    Message = "Order created. Please select address."
-                });
+                return Ok(new { OrderId = orderId, Message = "Order created. Please select address." });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
 
         [HttpPut("assign-address")]
         public async Task<IActionResult> AssignAddress([FromBody] AssignAddressToOrderDto dto)
@@ -54,12 +49,9 @@ namespace FoodDelivery.Api.Controllers
             if (!success)
                 return NotFound("Order not found.");
 
-            return Ok(new
-            {
-                Status = OrderEnums.OrderStatus.ReadyForPickup.ToString(),
-                Message = "Address assigned to order."
-            });
+            return Ok(new { Message = "Address assigned to order." });
         }
+
 
         [HttpPut("assign-agent/{orderId}")]
         public async Task<IActionResult> AssignAgentToOrder(int orderId)
@@ -71,12 +63,11 @@ namespace FoodDelivery.Api.Controllers
                     return NotFound("Order not found.");
 
                 var agent = await _assignmentService.AssignNearestAgentAsync(order);
+
                 if (agent == null)
                     return NotFound("No available delivery agents.");
 
-                // You can optionally update status here if needed
-                // order.Status = OrderEnums.OrderStatus.OutForDelivery.ToString();
-                await _orderRepository.UpdateOrderAsync(order);
+                await _orderRepository.UpdateOrderAsync(order); // Save agent assignment
 
                 return Ok(new
                 {
@@ -90,5 +81,6 @@ namespace FoodDelivery.Api.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
     }
 }
