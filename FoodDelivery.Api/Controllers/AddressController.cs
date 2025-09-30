@@ -28,7 +28,6 @@ namespace FoodDelivery.Api.Controllers
             return null;
         }
 
-
         [HttpGet("my-addresses")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetMyAddresses()

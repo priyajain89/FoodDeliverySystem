@@ -22,4 +22,14 @@ namespace FoodDelivery.Infrastructure.DTO
         public int OrderId { get; set; }
         public int AddressId { get; set; }
     }
+
+    public class DeliveryOrderSummaryDto
+    {
+        public int OrderId { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
+        public string CustomerAddress { get; set; } = string.Empty;
+        public string RestaurantName { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public DateTime OrderDate { get; set; }
+    }
 }

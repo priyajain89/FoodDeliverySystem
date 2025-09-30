@@ -1,11 +1,7 @@
 ﻿using FoodDelivery.Domain.Models;
-
 using FoodDelivery.Infrastructure.DTO;
-
 using FoodDelivery.Infrastructure.Repository;
-
 using Microsoft.AspNetCore.Authorization;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDelivery.Api.Controllers
@@ -48,6 +44,7 @@ namespace FoodDelivery.Api.Controllers
         }
 
         [HttpGet("get-all-Item")]
+
         public async Task<IActionResult> GetAll()
         {
             var result = await _repo.GetAllAsync();

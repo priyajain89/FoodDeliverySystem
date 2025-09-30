@@ -68,7 +68,6 @@ namespace FoodDelivery.Infrastructure.Repository
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-
     }
 }
 

@@ -20,6 +20,6 @@ namespace FoodDelivery.Infrastructure.DTO
             public string? DocumentUrl { get; set; }
             public string? Address { get; set; }
         }
-    }
+}
 
 

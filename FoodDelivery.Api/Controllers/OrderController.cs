@@ -50,7 +50,6 @@ namespace FoodDelivery.Api.Controllers
             return Ok(new { Message = "Address assigned to order." });
         }
 
-
         [HttpPut("assign-agent/{orderId}")]
         public async Task<IActionResult> AssignAgentToOrder(int orderId)
         {

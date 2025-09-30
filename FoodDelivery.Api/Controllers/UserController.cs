@@ -33,6 +33,7 @@ namespace FoodDelivery.Api.Controllers
             return Ok(users);
         }
 
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -40,6 +41,7 @@ namespace FoodDelivery.Api.Controllers
             if (user == null) return NotFound();
             return Ok(user);
         }
+
 
         [HttpPost("register")]
         public async Task<IActionResult> Create([FromBody] UserDto dto)
@@ -49,15 +51,6 @@ namespace FoodDelivery.Api.Controllers
             {
                 return Conflict("User with this email or phone already exists.");
             }
-
-            //if (dto.Role.ToLower() == "admin")
-            //{
-            //    var existingAdmin = await _userRepository.GetUsersByRoleAsync("Admin");
-            //    if (existingAdmin.Any())
-            //    {
-            //        return Conflict("An admin already exists in the system.");
-            //    }
-            //}
 
             var user = new User
             {
@@ -74,6 +67,7 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
+
         [HttpGet("role/{role}")]
         public async Task<IActionResult> GetByRole(string role)
         {
@@ -81,8 +75,8 @@ namespace FoodDelivery.Api.Controllers
             return Ok(users);
         }
 
-        [HttpPut("update/{id}")]
 
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UserDto dto)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
@@ -94,6 +88,7 @@ namespace FoodDelivery.Api.Controllers
             var updated = await _userRepository.UpdateUserAsync(user);
             return Ok(updated);
         }
+
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)

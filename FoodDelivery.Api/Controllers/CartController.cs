@@ -9,7 +9,6 @@ using System.Security.Claims;
 public class CartController : ControllerBase
 {
     private readonly ICartRepository _cartRepository;
-
     public CartController(ICartRepository cartRepository)
     {
         _cartRepository = cartRepository;
@@ -23,8 +22,8 @@ public class CartController : ControllerBase
             return Unauthorized("CustomerId not found in token.");
 
         var customerId = int.Parse(customerIdClaim);
-
         var user = await _cartRepository.GetUserByIdAsync(customerId);
+
         if (user == null || user.Role?.ToLower() != "customer")
             return Unauthorized("Only customers can add items to cart.");
 
@@ -42,6 +41,7 @@ public class CartController : ControllerBase
                 UserId = customerId,
                 RestaurantId = restaurantId
             };
+
             cart = await _cartRepository.CreateCartAsync(cart);
         }
 
@@ -56,7 +56,7 @@ public class CartController : ControllerBase
 
         return Ok(new
         {
-            CartId = savedItem.CartId,
+            cart.CartId,
             Message = "Item added to cart.",
             CartItemId = savedItem.CartItemId
         });
@@ -70,10 +70,11 @@ public class CartController : ControllerBase
             return Unauthorized("CustomerId not found in token.");
 
         var customerId = int.Parse(customerIdClaim);
-        var carts = await _cartRepository.GetAllCartsWithItemsAsync(customerId);
 
+        var carts = await _cartRepository.GetAllCartsWithItemsAsync(customerId);
         if (carts == null || !carts.Any())
             return NotFound("No carts found.");
+
 
         var result = carts.Select(cart => new CartViewDto
         {
@@ -95,3 +96,4 @@ public class CartController : ControllerBase
         return Ok(result);
     }
 }
+

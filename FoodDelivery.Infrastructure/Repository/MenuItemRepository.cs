@@ -52,6 +52,7 @@ namespace FoodDelivery.Infrastructure.Repository
                 RestaurantName = user.Name ?? "Unknown"
             };
         }
+
         public async Task<MenuItemViewDto?> GetByIdAsync(int id)
         {
             var item = await _context.MenuItems
@@ -67,7 +68,14 @@ namespace FoodDelivery.Infrastructure.Repository
                                       .Include(m => m.Restaurant)
                                       .ThenInclude(r => r.User)
                                       .ToListAsync();
-            return items.Select(i => ToViewDto(i, i.Restaurant?.User?.Name ?? "Unknown")).ToList();
+         
+            return items.Select(i => new MenuItemViewDto
+            {
+                ItemId = i.ItemId,
+                Name = i.Name,
+                RestaurantId = i.RestaurantId ?? 0,
+                RestaurantName = i.Restaurant?.User?.Name ?? "Unknown"
+            }).ToList();
         }
         public async Task<bool> UpdateAsync(int id, MenuItemUpdateDto dto)
         {
@@ -130,7 +138,7 @@ namespace FoodDelivery.Infrastructure.Repository
 
             return await query.ToListAsync();
         }
+
     }
 }
-
 
