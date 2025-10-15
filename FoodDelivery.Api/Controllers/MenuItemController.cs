@@ -23,7 +23,7 @@ namespace FoodDelivery.Api.Controllers
 
         [HttpPost("add-item")]
         [Authorize(Roles = "Restaurant")]
-        public async Task<IActionResult> Create([FromBody] MenuItemCreateDto dto)
+        public async Task<IActionResult> Create([FromForm] MenuItemCreateDto dto)
         {
             var userIdClaim = User.FindFirst("id")?.Value;
             if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
