@@ -29,7 +29,8 @@ namespace FoodDelivery.Api.Controllers
         }
 
         [HttpPost("submit")]
-        public async Task<IActionResult> SubmitDetails([FromBody] DeliveryAgentDTO dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> SubmitDetails([FromForm] DeliveryAgentDTO dto)
         {
 
             var fullAddress = $"{dto.Address}";
@@ -40,14 +41,13 @@ namespace FoodDelivery.Api.Controllers
             var agent = new DeliveryAgent
             {
                 UserId = dto.UserId,
-                DocumentUrl = dto.DocumentUrl,
                 Latitude = geoResult?.Latitude,
                 Longitude = geoResult?.Longitude,
                 Address = dto.Address
             };
 
 
-            var result = await _repo.SubmitAgentDetailsAsync(agent);
+            var result = await _repo.SubmitAgentDetailsAsync(agent, dto.DocumentUrl);
 
             if (result == null)
             {

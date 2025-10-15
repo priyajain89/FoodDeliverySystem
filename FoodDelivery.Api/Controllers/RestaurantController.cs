@@ -22,7 +22,8 @@ namespace FoodDelivery.Api.Controllers
         }
 
         [HttpPost("submit")]
-        public async Task<IActionResult> SubmitDetails([FromBody] RestaurantResponseDto dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> SubmitDetails([FromForm] RestaurantResponseDto dto)
         {
             var fullAddress = $"{dto.Address}, {dto.PinCode}";
 
@@ -34,22 +35,30 @@ namespace FoodDelivery.Api.Controllers
                 Address = dto.Address,
                 FssaiId = dto.FssaiId,
                 PinCode = dto.PinCode,
-                FssaiImage = dto.FssaiImage,
-                TradelicenseImage = dto.TradelicenseImage,
                 TradeId = dto.TradeId,
                 Latitude = geoResult?.Latitude,
                 Longitude = geoResult?.Longitude
             };
 
 
-            var result = await _repo.SubmitRestaurantDetailsAsync(restaurant);
 
-            if (result == null)
-            {
+            var newresult = await _repo.SubmitRestaurantDetailsAsync(restaurant, dto.FssaiImage, dto.TradelicenseImage);
+
+            if (newresult == null)
                 return BadRequest("Invalid restaurant user.");
-            }
 
-            return Ok(result);
+            return Ok(newresult);
+
+
+
+            //var result = await _repo.SubmitRestaurantDetailsAsync(restaurant);
+
+            //if (result == null)
+            //{
+            //    return BadRequest("Invalid restaurant user.");
+            //}
+
+            //return Ok(result);
 
 
 

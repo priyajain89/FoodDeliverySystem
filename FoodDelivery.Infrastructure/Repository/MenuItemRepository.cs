@@ -9,6 +9,8 @@ using FoodDelivery.Infrastructure.DTO;
 using Microsoft.EntityFrameworkCore;
 
 using System.Security.Claims;
+using FoodDelivery.Infrastructure.Services;
+
 
 namespace FoodDelivery.Infrastructure.Repository
 
@@ -16,9 +18,11 @@ namespace FoodDelivery.Infrastructure.Repository
     public class MenuItemRepository : IMenuItemRepository
     {
         private readonly AppDbContext _context;
-        public MenuItemRepository(AppDbContext context)
+        private readonly IFileService _fileService;
+        public MenuItemRepository(AppDbContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
         public async Task<MenuItemViewDto?> CreateAsync(MenuItemCreateDto dto, int userId)
@@ -34,6 +38,14 @@ namespace FoodDelivery.Infrastructure.Repository
 
             if (!StaticCategories.Categories.Contains(dto.Category))
                 return null;
+
+
+            string? imageUrl = null;
+            if (dto.FoodImage != null)
+            {
+                imageUrl = await _fileService.SaveFileAsync(dto.FoodImage, "menu-images"); // ? Save image
+            }
+
             var item = new MenuItem
             {
                 RestaurantId = restaurant.RestaurantId,
@@ -42,7 +54,7 @@ namespace FoodDelivery.Infrastructure.Repository
                 Price = dto.Price,
                 IsAvailable = dto.IsAvailable,
                 Category = dto.Category,
-                FoodImage = dto.FoodImage
+                FoodImage = imageUrl
             };
 
             _context.MenuItems.Add(item);

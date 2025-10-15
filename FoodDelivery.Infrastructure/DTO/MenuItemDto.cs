@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace FoodDelivery.Infrastructure.DTO
         public decimal Price { get; set; }
         public bool IsAvailable { get; set; }
         public string Category { get; set; } = string.Empty;
-        public string? FoodImage { get; set; }
+        public IFormFile? FoodImage { get; set; }
     }
     public class MenuItemUpdateDto
     {
@@ -37,5 +38,14 @@ namespace FoodDelivery.Infrastructure.DTO
         public int RestaurantId { get; set; }
         public string RestaurantName { get; set; } = string.Empty;
     }
+
+
+    //public class FoodItemDto
+    //{
+    //    public string Name { get; set; }
+    //    public IFormFile? FoodImage { get; set; }
+       
+    //}
+
 
 }
