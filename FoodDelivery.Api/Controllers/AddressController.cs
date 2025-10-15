@@ -29,42 +29,6 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-        [HttpGet]
-        [Authorize(Roles = "customer")]
-        public async Task<IActionResult> GetAll()
-        {
-            var userId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
-            var addresses = await _addressRepository.GetAllByUserIdAsync(userId);
-            return Ok(addresses);
-        }
-
-
-        [HttpGet("{id}")]
-        [Authorize(Roles = "customer")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var userId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
-            var address = await _addressRepository.GetByUserIdForCustomerAsync(id, userId);
-            if (address == null) return NotFound();
-            return Ok(address);
-        }
-
-
-        [HttpGet("my-addresses")]
-        [Authorize(Roles = "customer")]
-        public async Task<IActionResult> GetMyAddresses()
-        {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
-            if (userIdClaim == null)
-                return Unauthorized("Customer ID not found in token.");
-
-            int userId = int.Parse(userIdClaim.Value);
-            var addresses = await _addressRepository.GetAllByUserIdAsync(userId);
-
-            return Ok(addresses);
-        }
-
-
         [HttpPost]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> AddAddress(AddressAddDto dto)
@@ -78,7 +42,7 @@ namespace FoodDelivery.Api.Controllers
 
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> Update(int id, [FromBody] AddressAddDto dto)
         {
             var userId = GetUserIdFromToken();
@@ -106,11 +70,25 @@ namespace FoodDelivery.Api.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> Delete(int id)
         {
             await _addressRepository.DeleteAsync(id);
             return NoContent();
+        }
+
+        [HttpGet("my-addresses")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetMyAddresses()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
+            if (userIdClaim == null)
+                return Unauthorized("Customer ID not found in token.");
+
+            int userId = int.Parse(userIdClaim.Value);
+            var addresses = await _addressRepository.GetAllByUserIdAsync(userId);
+
+            return Ok(addresses);
         }
     }
 }

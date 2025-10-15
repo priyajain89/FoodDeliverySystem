@@ -18,7 +18,7 @@ namespace FoodDelivery.Infrastructure.Repository
         {
             var user = await _context.Users.FindAsync(restaurant.UserId);
             if (user == null || user.Role?.ToLower() != "restaurant")
-                throw new InvalidOperationException("Invalid restaurant user.");
+                return null;
 
             _context.Restaurants.Add(restaurant);
             await _context.SaveChangesAsync();

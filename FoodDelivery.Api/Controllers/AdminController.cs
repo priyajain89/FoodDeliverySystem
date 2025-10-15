@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDelivery.Api.Controllers
 {
-    //[Apicontroller] handles the error and responses in api endpoints automatically
+    
     [ApiController]
     [Route("api/[controller]")]
     public class AdminController : ControllerBase

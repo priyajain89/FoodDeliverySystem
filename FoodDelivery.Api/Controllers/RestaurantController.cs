@@ -26,7 +26,6 @@ namespace FoodDelivery.Api.Controllers
         {
             var fullAddress = $"{dto.Address}, {dto.PinCode}";
 
-            // Get coordinates from geocoding service
             var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
 
             var restaurant = new Restaurant
@@ -42,15 +41,16 @@ namespace FoodDelivery.Api.Controllers
                 Longitude = geoResult?.Longitude
             };
 
-            try
+
+            var result = await _repo.SubmitRestaurantDetailsAsync(restaurant);
+
+            if (result == null)
             {
-                var result = await _repo.SubmitRestaurantDetailsAsync(restaurant);
-                return Ok(result);
+                return BadRequest("Invalid restaurant user.");
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Ok(result);
+
 
 
         }
