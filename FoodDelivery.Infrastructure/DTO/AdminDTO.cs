@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace FoodDelivery.Infrastructure.DTO
 {
-
     public class VerifyUserDto
     {
         public int UserId { get; set; }
         public string Role { get; set; } = null!;
     }
-
 
     public class PendingRestaurantDto
     {
@@ -24,9 +22,4 @@ namespace FoodDelivery.Infrastructure.DTO
         public string Role { get; set; } = null!;
         public List<RestaurantDto> SubmittedRestaurants { get; set; } = new();
     }
-
-
-    
-
-
 }

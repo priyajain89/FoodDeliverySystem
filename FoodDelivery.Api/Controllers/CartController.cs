@@ -1,4 +1,3 @@
-﻿
 using FoodDelivery.Domain.Models;
 
 using FoodDelivery.Infrastructure.DTO;
@@ -10,69 +9,102 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 [ApiController]
+
 [Route("api/[controller]")]
+
 public class CartController : ControllerBase
+
 {
+
     private readonly ICartRepository _cartRepository;
+
     public CartController(ICartRepository cartRepository)
+
     {
+
         _cartRepository = cartRepository;
+
     }
 
     [HttpPost("add")]
+
     public async Task<IActionResult> AddToCart([FromBody] AddToCartDto dto)
+
     {
+
         var customerIdClaim = User.FindFirst("id")?.Value;
+
         if (string.IsNullOrEmpty(customerIdClaim))
+
             return Unauthorized("CustomerId not found in token.");
 
         var customerId = int.Parse(customerIdClaim);
+
         var user = await _cartRepository.GetUserByIdAsync(customerId);
 
         if (user == null || user.Role?.ToLower() != "customer")
+
             return Unauthorized("Only customers can add items to cart.");
 
         var menuItem = await _cartRepository.GetMenuItemByIdAsync(dto.ItemId);
+
         if (menuItem == null)
+
             return NotFound("Menu item not found.");
 
         var restaurantId = menuItem.RestaurantId;
 
         var cart = await _cartRepository.GetCartByCustomerAndRestaurantAsync(customerId, restaurantId);
+
         if (cart == null)
+
         {
+
             cart = new Cart
+
             {
+
                 UserId = customerId,
+
                 RestaurantId = restaurantId
+
             };
 
             cart = await _cartRepository.CreateCartAsync(cart);
+
         }
 
         var cartItem = new CartItem
+
         {
+
             CartId = cart.CartId,
+
             ItemId = dto.ItemId,
+
             Quantity = dto.Quantity
+
         };
 
         var savedItem = await _cartRepository.AddCartItemAsync(cartItem);
 
-
         return Ok(new
+
         {
+
             cart.CartId,
+
             Message = "Item added to cart.",
+
             CartItemId = savedItem.CartItemId
+
         });
 
     }
 
+    [HttpGet("customer-carts")]
 
-    [HttpGet("customer-cart")]
-
-    public async Task<IActionResult> GetCustomerCart()
+    public async Task<IActionResult> GetCustomerCarts()
 
     {
 
@@ -84,39 +116,46 @@ public class CartController : ControllerBase
 
         var customerId = int.Parse(customerIdClaim);
 
-        var cart = await _cartRepository.GetCartWithItemsAsync(customerId);
+        var carts = await _cartRepository.GetAllCartsWithItemsAsync(customerId);
 
-        if (cart == null)
+        if (carts == null || !carts.Any())
 
-            return NotFound("Cart not found.");
+            return NotFound("No carts found.");
 
-        var result = new
+
+        var result = carts.Select(cart => new CartViewDto
 
         {
 
-            cart.CartId,
+            CartId = cart.CartId,
 
-            cart.UserId,
+            CustomerId = cart.UserId ?? 0,
 
-            cart.RestaurantId,
+            RestaurantId = cart.RestaurantId ?? 0,
 
-            Items = cart.CartItems.Select(ci => new
+            RestaurantName = cart.Restaurant?.User?.Name ?? "Unknown",
+
+            Items = cart.CartItems.Select(ci => new CartItemDto
 
             {
 
-                ci.CartItemId,
+                ItemId = ci.ItemId ?? 0,
 
-                ci.ItemId,
+                Name = ci.Item?.Name ?? string.Empty,
 
-                ci.Quantity,
+                Description = ci.Item?.Description,
 
-                ItemName = ci.Item?.Name,
+                Price = ci.Item?.Price ?? 0,
 
-                ItemPrice = ci.Item?.Price
+                Quantity = ci.Quantity ?? 0,
 
-            })
+                Category = ci.Item?.Category,
 
-        };
+                FoodImage = ci.Item?.FoodImage
+
+            }).ToList()
+
+        }).ToList();
 
         return Ok(result);
 

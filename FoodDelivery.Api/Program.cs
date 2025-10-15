@@ -1,4 +1,3 @@
-
 using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.Repository;
@@ -33,7 +32,7 @@ namespace FoodDelivery.Api
 
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddTransient<EmailService>();
-
+            builder.Services.AddScoped<IFileService, FileService>();
 
             builder.Services.AddControllers();
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
@@ -48,11 +47,12 @@ namespace FoodDelivery.Api
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                options.JsonSerializerOptions.WriteIndented = true;
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.WriteIndented = true;
                 });
 
 
+            builder.Services.AddSingleton<OtpService>();
 
             var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
             builder.Services.AddAuthentication(x =>
@@ -70,7 +70,7 @@ namespace FoodDelivery.Api
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        //RoleClaimType = ClaimTypes.Role
+                        RoleClaimType = ClaimTypes.Role
                     };
                 });
 
@@ -85,8 +85,7 @@ namespace FoodDelivery.Api
                     Scheme = "Bearer"
                 });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-         {
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
              {
                  new OpenApiSecurityScheme
                  {
@@ -105,27 +104,14 @@ namespace FoodDelivery.Api
             });
 
 
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("Angular", policy =>
-                    policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod());
-            });
-
-
-
             var app = builder.Build();
-
-            
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseCors("Angular");
             app.UseHttpsRedirection();
-            
             app.UseAuthorization();
             app.MapControllers();
 

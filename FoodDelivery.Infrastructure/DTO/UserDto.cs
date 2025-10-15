@@ -14,6 +14,5 @@ namespace FoodDelivery.Infrastructure.DTO
         public string Phone { get; set; }
         public string Role { get; set; }
     }
-
 }
 

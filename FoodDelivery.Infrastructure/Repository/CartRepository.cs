@@ -1,5 +1,4 @@
-﻿
-using FoodDelivery.Domain.Data;
+﻿using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,5 +51,15 @@ public class CartRepository : ICartRepository
             .FirstOrDefaultAsync(c => c.UserId == customerId);
     }
 
+    public async Task<List<Cart>> GetAllCartsWithItemsAsync(int customerId)
+    {
+        return await _context.Carts
+            .Where(c => c.UserId == customerId)
+            .Include(c => c.CartItems)
+            .ThenInclude(ci => ci.Item)
+            .Include(c => c.Restaurant)
+            .ThenInclude(r => r.User)
+            .ToListAsync();
+    }
 
 }

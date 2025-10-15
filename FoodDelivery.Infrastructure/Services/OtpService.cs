@@ -8,12 +8,10 @@ namespace FoodDelivery.Infrastructure.Services
     {
         private readonly EmailService _emailService;
         private readonly ConcurrentDictionary<string, string> _otpStore = new();
-
         public OtpService(EmailService emailService)
         {
             _emailService = emailService;
         }
-
         public async Task<string> GenerateOtpAsync(string email)
         {
             var otp = new Random().Next(100000, 999999).ToString();
