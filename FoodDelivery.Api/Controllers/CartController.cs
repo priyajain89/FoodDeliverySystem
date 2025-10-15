@@ -52,10 +52,15 @@ public class CartController : ControllerBase
             Quantity = dto.Quantity
         };
 
-        await _cartRepository.AddCartItemAsync(cartItem);
-
-        return Ok("Item added to cart.");
+          var savedItem = await _cartRepository.AddCartItemAsync(cartItem);
+        return Ok(new
+        {
+            CartId = savedItem.CartId,
+            Message = "Item added to cart.",
+            CartItemId = savedItem.CartItemId
+        });
     }
+
 
     [HttpGet("customer-cart")]
     public async Task<IActionResult> GetCustomerCart()
@@ -70,6 +75,21 @@ public class CartController : ControllerBase
         if (cart == null)
             return NotFound("Cart not found.");
 
-        return Ok(cart);
+
+        var result = new
+        {   cart.CartId,
+            cart.UserId,
+            cart.RestaurantId,
+            Items = cart.CartItems.Select(ci => new
+            {
+                ci.CartItemId,
+                ci.ItemId,
+                ci.Quantity,
+                ItemName = ci.Item?.Name,
+                ItemPrice = ci.Item?.Price
+            })
+        };
+        return Ok(result);
+
     }
 }

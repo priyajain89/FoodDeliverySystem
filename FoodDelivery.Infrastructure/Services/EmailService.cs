@@ -15,58 +15,36 @@ namespace FoodDelivery.Infrastructure.Services
         private readonly EmailSettings _settings;
 
         public EmailService(IOptions<EmailSettings> options)
-
         {
-
             _settings = options.Value;
-
         }
 
-
-
         private SmtpClient CreateSmtpClient()
-
         {
-
             return new SmtpClient(_settings.SmtpHost)
-
             {
-
                 Port = _settings.SmtpPort,
-
                 EnableSsl = true,
-
                 Credentials = new NetworkCredential(_settings.FromEmail, _settings.AppPassword)
-
             };
-
         }
 
 
 
         public void SendSimpleEmail(string toEmail, string subject, string body)
-
         {
-
             var message = new MailMessage(_settings.FromEmail, toEmail, subject, body);
-
             CreateSmtpClient().Send(message);
-
         }
 
 
+        //public void SendEmailWithAttachment(string toEmail, string subject, string body, string attachmentPath)
+        //{
+        //    var message = new MailMessage(_settings.FromEmail, toEmail, subject, body);
+        //    message.Attachments.Add(new Attachment(attachmentPath));
+        //    CreateSmtpClient().Send(message);
 
-        public void SendEmailWithAttachment(string toEmail, string subject, string body, string attachmentPath)
-
-        {
-
-            var message = new MailMessage(_settings.FromEmail, toEmail, subject, body);
-
-            message.Attachments.Add(new Attachment(attachmentPath));
-
-            CreateSmtpClient().Send(message);
-
-        }
+        //}
 
     }
 }

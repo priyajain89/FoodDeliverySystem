@@ -21,22 +21,16 @@ namespace FoodDelivery.Infrastructure.Repository
 
         public async Task<BillDto> GenerateBillFromOrderAsync(int orderId)
         {
-            //var order = await _context.Orders
-            //    .Include(o => o.OrderItems)
-            //        .ThenInclude(oi => oi.Item)
-            //    .Include(o => o.Address)
-            //    .Include(o => o.Restaurant)
-            //    .FirstOrDefaultAsync(o => o.OrderId == orderId);
-            var order = await _context.Orders
-    .Include(o => o.OrderItems)
-        .ThenInclude(oi => oi.Item)
-    .Include(o => o.Address)
-    .Include(o => o.Restaurant)
-        .ThenInclude(r => r.User) // <-- Add this line
 
-.Include(o => o.Agent)
+            var order = await _context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Item)
+            .Include(o => o.Address)
+            .Include(o => o.Restaurant)
+                .ThenInclude(r => r.User)
+            .Include(o => o.Agent)
                 .ThenInclude(a => a.User)
-    .FirstOrDefaultAsync(o => o.OrderId == orderId);
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
 
             if (order == null || order.Address == null || order.Restaurant == null)
@@ -81,7 +75,8 @@ namespace FoodDelivery.Infrastructure.Repository
 
         private double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
-            double R = 6371; 
+            double R = 6371;
+
             double dLat = Math.PI / 180 * (lat2 - lat1);
             double dLon = Math.PI / 180 * (lon2 - lon1);
             double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +

@@ -17,15 +17,5 @@ namespace FoodDelivery.Api.Controllers
             _geocodingService = geocodingService;
         }
 
-        [HttpPost("get-coordinates")]
-        public async Task<IActionResult> GetCoordinates([FromBody] GeocodeRequestDto dto)
-        {
-            var result = await _geocodingService.GetCoordinatesAsync(dto.Address);
-            if (result == null)
-                return BadRequest("Unable to geocode address.");
-
-            return Ok(result);
-        }
     }
-
 }

@@ -15,8 +15,7 @@ namespace FoodDelivery.Infrastructure.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
-        //private readonly string _apiKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImQyMmYxZmE5MTljMzQ3ZTliMmI1NDJiNDkzMDg2NWU0IiwiaCI6Im11cm11cjY0In0=";
-
+       
         public GeocodingService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;

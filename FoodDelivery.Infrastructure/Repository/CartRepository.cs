@@ -36,10 +36,11 @@ public class CartRepository : ICartRepository
         return cart;
     }
 
-    public async Task AddCartItemAsync(CartItem cartItem)
+    public async Task<CartItem> AddCartItemAsync(CartItem cartItem)
     {
         _context.CartItems.Add(cartItem);
         await _context.SaveChangesAsync();
+        return cartItem;
     }
 
     public async Task<Cart?> GetCartWithItemsAsync(int customerId)

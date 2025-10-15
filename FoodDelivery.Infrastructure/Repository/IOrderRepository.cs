@@ -13,8 +13,6 @@ namespace FoodDelivery.Infrastructure.Repository
 
         Task<int> CreateOrderFromCartAsync(int customerId, CreateOrderFromCartDto dto);
         Task<bool> AssignAddressToOrderAsync(AssignAddressToOrderDto dto);
-
-
         Task<Order?> GetOrderByIdAsync(int orderId);
         Task UpdateOrderAsync(Order order);
 

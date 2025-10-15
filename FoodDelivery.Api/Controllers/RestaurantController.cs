@@ -12,20 +12,17 @@ namespace FoodDelivery.Api.Controllers
     public class RestaurantController : ControllerBase
     {
 
-
-     
-            private readonly IRestaurantRepository _repo;
-            private readonly IGeocodingService _geocodingService;
+        private readonly IRestaurantRepository _repo;
+        private readonly IGeocodingService _geocodingService;
 
         public RestaurantController(IRestaurantRepository repo, IGeocodingService geocodingService)
-            {
-                _repo = repo;
+        {
+            _repo = repo;
             _geocodingService = geocodingService;
         }
 
-            [HttpPost("submit")]
-       
-            public async Task<IActionResult> SubmitDetails([FromBody] RestaurantResponseDto dto)
+        [HttpPost("submit")]
+        public async Task<IActionResult> SubmitDetails([FromBody] RestaurantResponseDto dto)
         {
             var fullAddress = $"{dto.Address}, {dto.PinCode}";
 
@@ -45,34 +42,33 @@ namespace FoodDelivery.Api.Controllers
                 Longitude = geoResult?.Longitude
             };
 
-            try
+            var result = await _repo.SubmitRestaurantDetailsAsync(restaurant);
+
+            if (result == null)
             {
-                var result = await _repo.SubmitRestaurantDetailsAsync(restaurant);
-                return Ok(result);
+                return BadRequest("Invalid restaurant user.");
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Ok(result);
 
 
         }
 
 
         [HttpGet("getAllrestaurants")]
-            public async Task<IActionResult> GetAllRestaurants()
+        public async Task<IActionResult> GetAllRestaurants()
         {
             var restaurants = await _repo.GetAllRestaurantsAsync();
             return Ok(restaurants);
         }
 
-            [HttpPut("restaurant/update")]
-            public async Task<IActionResult> UpdateRestaurant([FromBody] RestaurantIDDto dto)
-            {
-                var result = await _repo.UpdateRestaurantAsync(dto);
-                if (!result) return NotFound("Restaurant not found.");
-                return Ok("Restaurant updated successfully.");
-            }
+        [HttpPut("restaurant/update")]
+        public async Task<IActionResult> UpdateRestaurant([FromBody] RestaurantIDDto dto)
+        {
+            var result = await _repo.UpdateRestaurantAsync(dto);
+            if (!result) return NotFound("Restaurant not found.");
+            return Ok("Restaurant updated successfully.");
+        }
 
 
 

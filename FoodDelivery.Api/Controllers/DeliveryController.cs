@@ -14,7 +14,7 @@ namespace FoodDelivery.Api.Controllers
 
         
             private readonly IDeliveryagentRepository _repo;
-        private readonly IGeocodingService _geocodingService;
+            private readonly IGeocodingService _geocodingService;
 
         public DeliveryController(IDeliveryagentRepository repo, IGeocodingService geocodingService)
             {
@@ -40,19 +40,18 @@ namespace FoodDelivery.Api.Controllers
                 Address = dto.Address
             };
 
-            try
+            var result = await _repo.SubmitAgentDetailsAsync(agent);
+
+            if (result == null)
             {
-                var result = await _repo.SubmitAgentDetailsAsync(agent);
-                return Ok(result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
+                return BadRequest("Invalid restaurant user.");
             }
 
+            return Ok(result);
 
 
         }
+
 
         [HttpPut("delivery-agent/update")]
         public async Task<IActionResult> UpdateDeliveryAgent([FromBody] DeliveryAgentResponseDto dto)

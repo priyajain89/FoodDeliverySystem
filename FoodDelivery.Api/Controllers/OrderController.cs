@@ -42,7 +42,6 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-
         [HttpPut("assign-address")]
         public async Task<IActionResult> AssignAddress([FromBody] AssignAddressToOrderDto dto)
         {
@@ -53,8 +52,8 @@ namespace FoodDelivery.Api.Controllers
             return Ok(new { Message = "Address assigned to order." });
         }
 
+
         [HttpPut("assign-agent/{orderId}")]
-  
         public async Task<IActionResult> AssignAgentToOrder(int orderId)
         {
             try
@@ -82,9 +81,6 @@ namespace FoodDelivery.Api.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-
-
-
 
     }
 }

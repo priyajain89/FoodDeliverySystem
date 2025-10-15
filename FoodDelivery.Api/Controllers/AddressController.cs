@@ -29,27 +29,19 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-        [HttpGet]
-        [Authorize(Roles = "customer")]
-        public async Task<IActionResult> GetAll()
+        [HttpPost]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> AddAddress(AddressAddDto dto)
         {
-            var userId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
-            var addresses = await _addressRepository.GetAllByUserIdAsync(userId);
-            return Ok(addresses);
-        }
+            var result = await _addressRepository.AddAddressAsync(dto, User);
+            if (result == null)
+                return Forbid("Unauthorized or invalid token.");
 
-        [HttpGet("{id}")]
-        [Authorize(Roles = "customer")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var userId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
-            var address = await _addressRepository.GetByUserIdForCustomerAsync(id, userId);
-            if (address == null) return NotFound();
-            return Ok(address);
+            return Ok(result);
         }
 
         [HttpGet("my-addresses")]
-        [Authorize(Roles = "customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetMyAddresses()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
@@ -62,20 +54,8 @@ namespace FoodDelivery.Api.Controllers
             return Ok(addresses);
         }
 
-
-        [HttpPost]
-        [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> AddAddress(AddressAddDto dto)
-        {
-            var result = await _addressRepository.AddAddressAsync(dto, User);
-            if (result == null)
-                return Forbid("Unauthorized or invalid token.");
-
-            return Ok(result);
-        }
-
         [HttpPut("{id}")]
-        [Authorize(Roles = "customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> Update(int id, [FromBody] AddressAddDto dto)
         {
             var userId = GetUserIdFromToken();
@@ -103,7 +83,7 @@ namespace FoodDelivery.Api.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "customer")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> Delete(int id)
         {
             await _addressRepository.DeleteAsync(id);

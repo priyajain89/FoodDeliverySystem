@@ -20,10 +20,7 @@ namespace FoodDelivery.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-
             builder.Services.AddScoped<IAddressRepository, AddressRepository>();
-
             builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
             builder.Services.AddScoped<IDeliveryagentRepository, DeliveryagentRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -74,7 +71,6 @@ namespace FoodDelivery.Api
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        //RoleClaimType = ClaimTypes.Role
                     };
                 });
 
@@ -120,10 +116,7 @@ namespace FoodDelivery.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

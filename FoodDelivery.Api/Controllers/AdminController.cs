@@ -15,9 +15,7 @@ namespace FoodDelivery.Api.Controllers
             _adminRepo = adminRepo;
         }
 
-        /// <summary>
-        /// Get all unverified restaurants who submitted details.
-        /// </summary>
+       
         [HttpGet("unverified/restaurants")]
         public async Task<IActionResult> GetUnverifiedRestaurants()
         {
@@ -26,11 +24,6 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-
-
-        /// <summary>
-        /// Get all unverified delivery agents who submitted details.
-        /// </summary>
         [HttpGet("unverified/agents")]
         public async Task<IActionResult> GetUnverifiedAgents()
         {
@@ -38,9 +31,7 @@ namespace FoodDelivery.Api.Controllers
             return Ok(users);
         }
 
-        /// <summary>
-        /// Verify a user by ID and role.
-        /// </summary>
+       
         [HttpPut("verify")]
         public async Task<IActionResult> VerifyUser([FromBody] VerifyUserDto dto)
         {
