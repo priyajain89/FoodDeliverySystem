@@ -11,7 +11,6 @@ namespace FoodDelivery.Infrastructure.DTO
         public int ItemId { get; set; }
         public int Quantity { get; set; }
     }
-
     public class CartItemDto
     {
         public int ItemId { get; set; }
@@ -22,7 +21,6 @@ namespace FoodDelivery.Infrastructure.DTO
         public string? Category { get; set; }
         public string? FoodImage { get; set; }
     }
-
     public class CartViewDto
     {
         public int CartId { get; set; }

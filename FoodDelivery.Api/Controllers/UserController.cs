@@ -33,6 +33,7 @@ namespace FoodDelivery.Api.Controllers
             return Ok(users);
         }
 
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -41,6 +42,7 @@ namespace FoodDelivery.Api.Controllers
             return Ok(user);
         }
 
+
         [HttpPost("register")]
         public async Task<IActionResult> Create([FromBody] UserDto dto)
         {
@@ -48,15 +50,6 @@ namespace FoodDelivery.Api.Controllers
             if (existingUser != null)
             {
                 return Conflict("User with this email or phone already exists.");
-            }
-
-            if (dto.Role.ToLower() == "admin")
-            {
-                var existingAdmin = await _userRepository.GetUsersByRoleAsync("Admin");
-                if (existingAdmin.Any())
-                {
-                    return Conflict("An admin already exists in the system.");
-                }
             }
 
             var user = new User
@@ -70,8 +63,9 @@ namespace FoodDelivery.Api.Controllers
 
             var created = await _userRepository.CreateUserAsync(user);
 
-            return CreatedAtAction(nameof(GetById), new { id = created.UserId }, created);
+            return Ok(new { message = "Successfully registered", userId = created.UserId });
         }
+
 
 
         [HttpGet("role/{role}")]
@@ -81,8 +75,8 @@ namespace FoodDelivery.Api.Controllers
             return Ok(users);
         }
 
-        [HttpPut("update/{id}")]
 
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UserDto dto)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
@@ -94,6 +88,7 @@ namespace FoodDelivery.Api.Controllers
             var updated = await _userRepository.UpdateUserAsync(user);
             return Ok(updated);
         }
+
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -133,22 +128,12 @@ namespace FoodDelivery.Api.Controllers
             }
 
             var user = await _userRepository.GetUserByEmailAsync(dto.Email);
-            if (user == null)
-            {
-                return Unauthorized("User not found.");
-            }
-            if ((user.Role.ToLower() == "admin" || user.Role.ToLower() == "customer") && user.IsVerified == true)
-            {
-                user.IsVerified = true;
-                await _userRepository.UpdateUserAsync(user);
-            }
-
             TokenGeneration jwtTokenString = new TokenGeneration(_configuration);
             string tokenString = jwtTokenString.GenerateJWT(user.UserId.ToString(), user.Name, user.Email, user.Role);
 
             return Ok(new
             {
-                message = "OTP verified successfully. you are logged in.",
+                message = "OTP verified successfully. You are Logged in.",
                 token = tokenString
             });
         }

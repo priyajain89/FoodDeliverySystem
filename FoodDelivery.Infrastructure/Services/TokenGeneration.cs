@@ -15,13 +15,11 @@ namespace FoodDelivery.Infrastructure.Services
         }
 
         public string GenerateJWT(string id, string name, string email, string role)
-        {
-            
+        {  
             var key = _configuration.GetValue<string>("ApiSettings:Secret");
             var securedKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var securityCredentials = new SigningCredentials(securedKey, SecurityAlgorithms.HmacSha256);
-
-           
+        
             var claims = new List<Claim>()
             {
                 new Claim("id", id.ToString()),
@@ -29,7 +27,6 @@ namespace FoodDelivery.Infrastructure.Services
                 new Claim("Email",email),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-
             };
 
             var token = new JwtSecurityToken(

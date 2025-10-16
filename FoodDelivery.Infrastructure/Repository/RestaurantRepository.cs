@@ -1,6 +1,8 @@
 ﻿using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
+using FoodDelivery.Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodDelivery.Infrastructure.Repository
@@ -9,16 +11,28 @@ namespace FoodDelivery.Infrastructure.Repository
     {
         private readonly AppDbContext _context;
 
-        public RestaurantRepository(AppDbContext context)
+        private readonly IFileService _fileService;
+
+        public RestaurantRepository(AppDbContext context, IFileService fileService)
+
         {
             _context = context;
+            _fileService = fileService;
         }
 
-        public async Task<Restaurant> SubmitRestaurantDetailsAsync(Restaurant restaurant)
+        public async Task<Restaurant> SubmitRestaurantDetailsAsync(Restaurant restaurant, IFormFile? fssaiImage, IFormFile? TradelicenseImage)
         {
             var user = await _context.Users.FindAsync(restaurant.UserId);
             if (user == null || user.Role?.ToLower() != "restaurant")
-                throw new InvalidOperationException("Invalid restaurant user.");
+                return null;
+
+
+            if (fssaiImage != null)
+                restaurant.FssaiImage = await _fileService.SaveFileAsync(fssaiImage, "fssai-docs");
+
+            if (TradelicenseImage != null)
+                restaurant.TradelicenseImage = await _fileService.SaveFileAsync(TradelicenseImage, "trade-docs");
+
 
             _context.Restaurants.Add(restaurant);
             await _context.SaveChangesAsync();
@@ -60,8 +74,5 @@ namespace FoodDelivery.Infrastructure.Repository
             await _context.SaveChangesAsync();
             return true;
         }
-
-
-
     }
 }

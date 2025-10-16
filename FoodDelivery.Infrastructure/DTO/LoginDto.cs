@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace FoodDelivery.Infrastructure.DTO
 {
-    public class RequestOtpDTO{
+    public class RequestOtpDTO
+    {
             public string Email { get; set; }
-        }
+    }
 
     public class VerifyOtpDTO
     {

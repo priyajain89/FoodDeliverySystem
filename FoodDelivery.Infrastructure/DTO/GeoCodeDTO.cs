@@ -10,7 +10,6 @@ namespace FoodDelivery.Infrastructure.DTO
     {
         public string Address { get; set; } = string.Empty;
     }
-
     public class GeocodeResponseDto
     {
         public double Latitude { get; set; }

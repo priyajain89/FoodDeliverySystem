@@ -1,9 +1,12 @@
 ﻿using Azure;
+using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
 using FoodDelivery.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FoodDelivery.Api.Controllers
 {
@@ -12,18 +15,21 @@ namespace FoodDelivery.Api.Controllers
     public class DeliveryController : ControllerBase
     {
 
-        
-            private readonly IDeliveryagentRepository _repo;
-            private readonly IGeocodingService _geocodingService;
 
-        public DeliveryController(IDeliveryagentRepository repo, IGeocodingService geocodingService)
-            {
-                _repo = repo;
+        private readonly IOrderRepository _orderRepo;
+        private readonly IDeliveryagentRepository _repo;
+        private readonly IGeocodingService _geocodingService;
+
+        public DeliveryController(IOrderRepository orderRepo, IDeliveryagentRepository repo, IGeocodingService geocodingService)
+        {
+            _repo = repo;
             _geocodingService = geocodingService;
+            _orderRepo = orderRepo;
         }
 
         [HttpPost("submit")]
-        public async Task<IActionResult> SubmitDetails([FromBody] DeliveryAgentDTO dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> SubmitDetails([FromForm] DeliveryAgentDTO dto)
         {
 
             var fullAddress = $"{dto.Address}";
@@ -34,13 +40,13 @@ namespace FoodDelivery.Api.Controllers
             var agent = new DeliveryAgent
             {
                 UserId = dto.UserId,
-                DocumentUrl = dto.DocumentUrl,
                 Latitude = geoResult?.Latitude,
                 Longitude = geoResult?.Longitude,
                 Address = dto.Address
             };
 
-            var result = await _repo.SubmitAgentDetailsAsync(agent);
+
+            var result = await _repo.SubmitAgentDetailsAsync(agent, dto.DocumentUrl);
 
             if (result == null)
             {
@@ -62,11 +68,41 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
+        [HttpGet("orders/agentId")]
+        public async Task<IActionResult> GetOrdersForAgent()
+        {
 
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("id");
+
+            if (idClaim == null || !int.TryParse(idClaim.Value, out int agentId))
+            {
+                return Unauthorized("Agent ID not found in token.");
+            }
+
+            var orders = await _orderRepo.GetOrdersForAgentAsync(agentId);
+            return Ok(orders);
+        }
+
+
+        [HttpPost("mark-delivered/{orderId}")]
+        public async Task<IActionResult> MarkOrderAsDelivered(int orderId)
+        {
+            var order = await _orderRepo.GetOrderByIdAsync(orderId);
+            if (order == null) return NotFound("Order not found.");
+
+            order.Status = "Delivered";
+            await _orderRepo.UpdateOrderAsync(order);
+
+            if (order.AgentId.HasValue)
+            {
+                var updated = await _repo.MarkAgentAvailableAsync(order.AgentId.Value);
+                if (!updated)
+                {
+                    return BadRequest("Failed to update agent availability.");
+                }
+            }
+
+            return Ok("Order marked as delivered and agent availability updated.");
+        }
     }
 }
-
-
-
-
-

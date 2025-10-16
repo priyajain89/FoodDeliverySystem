@@ -1,11 +1,7 @@
 ﻿using FoodDelivery.Domain.Models;
-
 using FoodDelivery.Infrastructure.DTO;
-
 using FoodDelivery.Infrastructure.Repository;
-
 using Microsoft.AspNetCore.Authorization;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDelivery.Api.Controllers
@@ -25,32 +21,63 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-        [HttpPost("add-items")]
+        [HttpPost("add-item")]
         [Authorize(Roles = "Restaurant")]
-        public async Task<IActionResult> Create([FromBody] MenuItemCreateDto dto)
+        public async Task<IActionResult> Create([FromForm] MenuItemCreateDto dto)
         {
             var userIdClaim = User.FindFirst("id")?.Value;
-
             if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
-
                 return Unauthorized("Invalid token.");
-
             var result = await _repo.CreateAsync(dto, userId);
-
             if (result == null)
-
                 return BadRequest("Restaurant not verified or category invalid.");
-
             return Ok(result);
+        }
 
+        [HttpGet("get-by{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var result = await _repo.GetByIdAsync(id);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+
+        [HttpGet("get-all-Item")]
+
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _repo.GetAllAsync();
+            return Ok(result);
+        }
+
+        [HttpPut("update-ItemBy{id}")]
+        [Authorize(Roles = "Restaurant")]
+        public async Task<IActionResult> Update(int id, [FromBody] MenuItemUpdateDto dto)
+        {
+            var success = await _repo.UpdateAsync(id, dto);
+            if (!success)
+                return BadRequest("Update failed.");
+            return NoContent();
+        }
+
+        [HttpDelete("delete-ById{id}")]
+        [Authorize(Roles = "Restaurant")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _repo.DeleteAsync(id);
+            if (!success)
+                return NotFound();
+            return NoContent();
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] string pinCode,
-            [FromQuery] string? restaurantName,
-            [FromQuery] string? itemName,
-            [FromQuery] string? category,
-            [FromQuery] string? city)
+        public async Task<IActionResult> Search(
+         [FromQuery] string pinCode,
+         [FromQuery] string? restaurantName,
+         [FromQuery] string? itemName,
+         [FromQuery] string? category,
+         [FromQuery] string? city)
         {
             var items = await _repo.SearchAsync(pinCode, restaurantName, itemName, category, city);
             return Ok(items.Select(item => new MenuItemViewDto
@@ -65,40 +92,5 @@ namespace FoodDelivery.Api.Controllers
                 RestaurantName = item.Restaurant?.User?.Name ?? "Unknown",
             }));
         }
-
-       
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var result = await _repo.GetAllAsync();
-            return Ok(result);
-        }
-
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Restaurant")]
-        public async Task<IActionResult> Update(int id, [FromBody] MenuItemUpdateDto dto)
-        {
-            var success = await _repo.UpdateAsync(id, dto);
-            if (!success)
-                return BadRequest("Update failed.");
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Restaurant")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var success = await _repo.DeleteAsync(id);
-            if (!success)
-                return NotFound();
-            return NoContent();
-        }
-
-
     }
-
-
 }
-
-

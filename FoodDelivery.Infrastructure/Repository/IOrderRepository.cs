@@ -10,11 +10,11 @@ namespace FoodDelivery.Infrastructure.Repository
 {
     public interface IOrderRepository
     {
-
         Task<int> CreateOrderFromCartAsync(int customerId, CreateOrderFromCartDto dto);
         Task<bool> AssignAddressToOrderAsync(AssignAddressToOrderDto dto);
         Task<Order?> GetOrderByIdAsync(int orderId);
         Task UpdateOrderAsync(Order order);
+        Task<IEnumerable<DeliveryOrderSummaryDto>> GetOrdersForAgentAsync(int agentId);
 
     }
 }
