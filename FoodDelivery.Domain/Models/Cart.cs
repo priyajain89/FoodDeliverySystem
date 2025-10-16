@@ -17,7 +17,7 @@ public partial class Cart
 
     public int? RestaurantId { get; set; }
 
-    public int? CartItemId { get; set; }
+    //public int? CartItemId { get; set; }
 
     [JsonIgnore]
 
