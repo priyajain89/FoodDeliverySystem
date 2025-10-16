@@ -50,4 +50,14 @@ public class CartRepository : ICartRepository
             .ThenInclude(ci => ci.Item)
             .FirstOrDefaultAsync(c => c.UserId == customerId);
     }
+    public async Task<List<Cart>> GetAllCartsWithItemsAsync(int customerId)
+    {
+        return await _context.Carts
+            .Where(c => c.UserId == customerId)
+            .Include(c => c.CartItems)
+            .ThenInclude(ci => ci.Item)
+            .Include(c => c.Restaurant)
+            .ThenInclude(r => r.User)
+            .ToListAsync();
+    }
 }

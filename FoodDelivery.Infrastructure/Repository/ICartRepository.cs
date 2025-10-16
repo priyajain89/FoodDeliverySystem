@@ -8,5 +8,6 @@ public interface ICartRepository
     Task<Cart> CreateCartAsync(Cart cart);
     Task <CartItem> AddCartItemAsync(CartItem cartItem);
     Task<Cart?> GetCartWithItemsAsync(int customerId);
+    Task<List<Cart>> GetAllCartsWithItemsAsync(int customerId);
 }
 
