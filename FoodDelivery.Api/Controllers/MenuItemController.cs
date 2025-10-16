@@ -71,16 +71,14 @@ namespace FoodDelivery.Api.Controllers
             return NoContent();
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> Search(
-         [FromQuery] string pinCode,
-         [FromQuery] string? restaurantName,
-         [FromQuery] string? itemName,
-         [FromQuery] string? category,
-         [FromQuery] string? city)
+
+
+        [HttpGet("search-by-pincode")]
+        public async Task<IActionResult> SearchByPinCode([FromQuery] string pinCode)
         {
-            var items = await _repo.SearchAsync(pinCode, restaurantName, itemName, category, city);
-            return Ok(items.Select(item => new MenuItemViewDto
+            var items = await _repo.SearchByPinCodeAsync(pinCode);
+
+            var result = items.Select(item => new MenuItemViewDto
             {
                 ItemId = item.ItemId,
                 Name = item.Name ?? string.Empty,
@@ -90,7 +88,34 @@ namespace FoodDelivery.Api.Controllers
                 Category = item.Category,
                 FoodImage = item.FoodImage,
                 RestaurantName = item.Restaurant?.User?.Name ?? "Unknown",
-            }));
+            });
+
+            return Ok(result);
+        }
+
+        [HttpGet("search-by-filters")]
+        public async Task<IActionResult> SearchByFilters(
+        [FromQuery] string? restaurantName,
+        [FromQuery] string? itemName,
+        [FromQuery] string? category,
+        [FromQuery] string? city)
+        {
+            var items = await _repo.SearchByFiltersAsync(restaurantName, itemName, category, city);
+
+            var result = items.Select(item => new MenuItemViewDto
+            {
+                ItemId = item.ItemId,
+
+                Name = item.Name ?? string.Empty,
+                Description = item.Description,
+                Price = item.Price ?? 0,
+                IsAvailable = item.IsAvailable ?? false,
+                Category = item.Category,
+                FoodImage = item.FoodImage,
+                RestaurantName = item.Restaurant?.User?.Name ?? "Unknown",
+            });
+
+            return Ok(result);
         }
     }
 }

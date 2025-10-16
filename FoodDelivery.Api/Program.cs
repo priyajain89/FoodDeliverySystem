@@ -103,6 +103,16 @@ namespace FoodDelivery.Api
          });
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200") // Angular dev server
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
 
             var app = builder.Build();
             // Configure the HTTP request pipeline.
@@ -111,6 +121,8 @@ namespace FoodDelivery.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors("AllowAngularApp");
+
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
