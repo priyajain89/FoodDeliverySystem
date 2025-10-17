@@ -99,44 +99,70 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-        //Login & OPT
         [HttpPost("login-request")]
+
         public async Task<IActionResult> LoginRequest([FromBody] RequestOtpDTO dto)
+
         {
+
             var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+
             if (user == null)
+
             {
+
                 return Unauthorized("You are not a registered user.");
+
             }
 
             if (user.IsVerified != null && user.IsVerified == false)
+
             {
+
                 return Unauthorized("Your account is not verified. Please contact support.");
+
             }
 
             await _otpService.GenerateOtpAsync(dto.Email);
-            return Ok("OTP sent successfully to your email.");
+
+            return Ok(new { message = "OTP sent successfully to your email." });
+
         }
 
         [HttpPost("verify-otp")]
+
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDTO dto)
+
         {
+
             var isValid = _otpService.VerifyOtp(dto.Email, dto.Otp);
+
             if (!isValid)
+
             {
+
                 return Unauthorized("Invalid OTP or email.");
+
             }
 
             var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+
             TokenGeneration jwtTokenString = new TokenGeneration(_configuration);
+
             string tokenString = jwtTokenString.GenerateJWT(user.UserId.ToString(), user.Name, user.Email, user.Role);
 
             return Ok(new
+
             {
+
                 message = "OTP verified successfully. You are Logged in.",
+
                 token = tokenString
+
             });
+
         }
+
 
     }
 

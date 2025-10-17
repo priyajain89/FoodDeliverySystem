@@ -142,11 +142,20 @@ namespace FoodDelivery.Infrastructure.Repository
         }
 
 
-        public async Task<IEnumerable<MenuItem>> SearchByFiltersAsync(string? restaurantName, string? itemName, string? category, string? city)
+        public async Task<IEnumerable<MenuItem>> SearchByFiltersAsync(
+     string pinCode,
+     string? restaurantName,
+     string? itemName,
+     string? category,
+     string? city)
         {
+            if (!int.TryParse(pinCode, out int parsedPin))
+                return Enumerable.Empty<MenuItem>();
+
             var query = _context.MenuItems
                 .Include(m => m.Restaurant)
-                .ThenInclude(r => r.User)
+                    .ThenInclude(r => r.User)
+                .Where(m => m.Restaurant.PinCode == parsedPin)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(restaurantName))
@@ -163,7 +172,6 @@ namespace FoodDelivery.Infrastructure.Repository
 
             return await query.ToListAsync();
         }
-
     }
 }
 
