@@ -20,13 +20,8 @@ namespace FoodDelivery.Infrastructure.Repository
         {
             _context = context;
             _geocodingService = geocodingService;
-
             _addressRepo = addressRepo;
-        
-
-             
         }
-
 
         public async Task<int> CreateOrderFromCartAsync(int customerId, CreateOrderFromCartDto dto)
         {
@@ -61,13 +56,11 @@ namespace FoodDelivery.Infrastructure.Repository
                     Price = item.Item?.Price ?? 0
                 });
             }
-
             _context.CartItems.RemoveRange(cart.CartItems);
             await _context.SaveChangesAsync();
 
             return order.OrderId;
         }
-
 
         public async Task<bool> AssignAddressToOrderAsync(AssignAddressToOrderDto dto)
         {
@@ -95,6 +88,7 @@ namespace FoodDelivery.Infrastructure.Repository
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task<IEnumerable<DeliveryOrderSummaryDto>> GetOrdersForAgentAsync(int agentId)
         {
@@ -134,11 +128,5 @@ namespace FoodDelivery.Infrastructure.Repository
 
             return result;
         }
-
-
-
-
-
-
     }
 }

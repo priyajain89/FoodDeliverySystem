@@ -16,12 +16,11 @@ namespace FoodDelivery.Api.Controllers
     {
 
 
-
         private readonly IOrderRepository _orderRepo;
         private readonly IDeliveryagentRepository _repo;
         private readonly IGeocodingService _geocodingService;
 
-        public DeliveryController(IOrderRepository orderRepo,IDeliveryagentRepository repo, IGeocodingService geocodingService)
+        public DeliveryController(IOrderRepository orderRepo, IDeliveryagentRepository repo, IGeocodingService geocodingService)
         {
             _repo = repo;
             _geocodingService = geocodingService;
@@ -58,7 +57,6 @@ namespace FoodDelivery.Api.Controllers
 
 
 
-
         }
 
 
@@ -71,10 +69,9 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-
         [HttpGet("orders/agentId")]
         public async Task<IActionResult> GetOrdersForAgent()
-            {
+        {
 
             var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("id");
 
@@ -84,8 +81,8 @@ namespace FoodDelivery.Api.Controllers
             }
 
             var orders = await _orderRepo.GetOrdersForAgentAsync(agentId);
-                return Ok(orders);
-            }
+            return Ok(orders);
+        }
 
 
         [HttpPost("mark-delivered/{orderId}")]
@@ -110,13 +107,3 @@ namespace FoodDelivery.Api.Controllers
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

@@ -10,9 +10,11 @@ namespace FoodDelivery.Infrastructure.Repository
     public class RestaurantRepository : IRestaurantRepository
     {
         private readonly AppDbContext _context;
+
         private readonly IFileService _fileService;
 
         public RestaurantRepository(AppDbContext context, IFileService fileService)
+
         {
             _context = context;
             _fileService = fileService;
@@ -55,6 +57,34 @@ namespace FoodDelivery.Infrastructure.Repository
 
             return restaurants;
         }
+        //public async Task<IEnumerable<RestaurantDto>> GetUnverifiedRestaurantsAsync()
+        //{
+        //    return await _context.Users
+        //        .Where(u => u.Role == "Restaurant" && u.IsVerified == false)
+        //        .Where(u => u.Restaurants.Any())
+        //        .Include(u => u.Restaurants)
+        //        .Select(u => new RestaurantDto
+        //        {
+        //            UserId = u.UserId,
+        //            Name = u.Name,
+        //            Email = u.Email,
+        //            Phone = u.Phone,
+
+        //            Role = u.Role,
+        //            SubmittedRestaurants = u.Restaurants.Select(r => new RestaurantIDDto
+        //            {
+        //                RestaurantId = r.RestaurantId,
+        //                UserId = r.UserId,
+        //                Address = r.Address,
+        //                FssaiId = r.FssaiId,
+        //                PinCode = r.PinCode,
+        //                FssaiImage = r.FssaiImage,
+        //                TradelicenseImage = r.TradelicenseImage,
+        //                TradeId = r.TradeId
+        //            }).ToList()
+        //        })
+        //        .ToListAsync();
+        //}
 
         public async Task<bool> UpdateRestaurantAsync(RestaurantIDDto dto)
         {
@@ -72,8 +102,5 @@ namespace FoodDelivery.Infrastructure.Repository
             await _context.SaveChangesAsync();
             return true;
         }
-
-
-
     }
 }

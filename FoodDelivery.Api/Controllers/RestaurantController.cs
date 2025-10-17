@@ -41,29 +41,16 @@ namespace FoodDelivery.Api.Controllers
             };
 
 
-
             var newresult = await _repo.SubmitRestaurantDetailsAsync(restaurant, dto.FssaiImage, dto.TradelicenseImage);
 
             if (newresult == null)
                 return BadRequest("Invalid restaurant user.");
 
+
             return Ok(newresult);
 
 
-
-            //var result = await _repo.SubmitRestaurantDetailsAsync(restaurant);
-
-            //if (result == null)
-            //{
-            //    return BadRequest("Invalid restaurant user.");
-            //}
-
-            //return Ok(result);
-
-
-
         }
-
 
         [HttpGet("getAllrestaurants")]
         public async Task<IActionResult> GetAllRestaurants()
@@ -79,9 +66,6 @@ namespace FoodDelivery.Api.Controllers
             if (!result) return NotFound("Restaurant not found.");
             return Ok("Restaurant updated successfully.");
         }
-
-
-
     }
 }
 

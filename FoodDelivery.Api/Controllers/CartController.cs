@@ -1,12 +1,13 @@
+
 ﻿
 using FoodDelivery.Domain.Models;
 
+
+﻿using FoodDelivery.Domain.Models;
+
 using FoodDelivery.Infrastructure.DTO;
-
 using FoodDelivery.Infrastructure.Repository;
-
 using Microsoft.AspNetCore.Mvc;
-
 using System.Security.Claims;
 
 [ApiController]
@@ -65,66 +66,65 @@ public class CartController : ControllerBase
             Message = "Item added to cart.",
             CartItemId = savedItem.CartItemId
         });
-
     }
 
 
-    [HttpGet("customer-cart")]
+   
+
+
+    [HttpGet("customer-carts")]
     public async Task<IActionResult> GetCustomerCarts()
-
     {
-
         var customerIdClaim = User.FindFirst("id")?.Value;
-
         if (string.IsNullOrEmpty(customerIdClaim))
-
             return Unauthorized("CustomerId not found in token.");
 
         var customerId = int.Parse(customerIdClaim);
 
         var carts = await _cartRepository.GetAllCartsWithItemsAsync(customerId);
-
         if (carts == null || !carts.Any())
-
             return NotFound("No carts found.");
 
 
         var result = carts.Select(cart => new CartViewDto
-
         {
-
+            
             CartId = cart.CartId,
-
             CustomerId = cart.UserId ?? 0,
-
             RestaurantId = cart.RestaurantId ?? 0,
-
             RestaurantName = cart.Restaurant?.User?.Name ?? "Unknown",
-
             Items = cart.CartItems.Select(ci => new CartItemDto
-
             {
-
+                cartItemId = ci.CartItemId,
                 ItemId = ci.ItemId ?? 0,
-
                 Name = ci.Item?.Name ?? string.Empty,
-
                 Description = ci.Item?.Description,
-
                 Price = ci.Item?.Price ?? 0,
-
                 Quantity = ci.Quantity ?? 0,
-
                 Category = ci.Item?.Category,
-
                 FoodImage = ci.Item?.FoodImage
-
             }).ToList()
-
         }).ToList();
-
         return Ok(result);
+    }
 
+    [HttpPut("update-quantity")]
+    public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityDto dto)
+    {
+        var success = await _cartRepository.UpdateQuantityAsync(dto.CartItemId, dto.Quantity);
+        if (!success) return NotFound("Cart item not found");
+
+        return Ok("Quantity updated successfully");
+    }
+
+
+    [HttpDelete("remove-item/{cartItemId}")]
+    public async Task<IActionResult> RemoveItem(int cartItemId)
+    {
+        var success = await _cartRepository.RemoveItemAsync(cartItemId);
+        if (!success) return NotFound("Cart item not found");
+
+        return Ok("Item removed successfully");
     }
 
 }

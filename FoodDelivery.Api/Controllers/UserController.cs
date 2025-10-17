@@ -52,15 +52,6 @@ namespace FoodDelivery.Api.Controllers
                 return Conflict("User with this email or phone already exists.");
             }
 
-            if (dto.Role.ToLower() == "admin")
-            {
-                var existingAdmin = await _userRepository.GetUsersByRoleAsync("Admin");
-                if (existingAdmin.Any())
-                {
-                    return Conflict("An admin already exists in the system.");
-                }
-            }
-
             var user = new User
             {
                 Name = dto.Name,
@@ -137,14 +128,12 @@ namespace FoodDelivery.Api.Controllers
             }
 
             var user = await _userRepository.GetUserByEmailAsync(dto.Email);
-            
-
             TokenGeneration jwtTokenString = new TokenGeneration(_configuration);
             string tokenString = jwtTokenString.GenerateJWT(user.UserId.ToString(), user.Name, user.Email, user.Role);
 
             return Ok(new
             {
-                message = "OTP verified successfully. You are logged in.",
+                message = "OTP verified successfully. You are Logged in.",
                 token = tokenString
             });
         }

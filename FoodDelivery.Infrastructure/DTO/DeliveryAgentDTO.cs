@@ -9,14 +9,11 @@ namespace FoodDelivery.Infrastructure.DTO
 {
     public class DeliveryAgentDTO
     {
-
         public int UserId { get; set; }
         public IFormFile? DocumentUrl { get; set; }
         public string? Address { get; set; }
 
     }
-
-    
         public class DeliveryAgentResponseDto
         {
             public int AgentId { get; set; }
@@ -24,6 +21,6 @@ namespace FoodDelivery.Infrastructure.DTO
             public string? DocumentUrl { get; set; }
             public string? Address { get; set; }
         }
-    }
+}
 
 

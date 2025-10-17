@@ -28,6 +28,17 @@ namespace FoodDelivery.Api.Controllers
             return null;
         }
 
+        [HttpGet("my-addresses")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetMyAddresses()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
+            if (userIdClaim == null)
+                return Unauthorized("Customer ID not found in token.");
+            int userId = int.Parse(userIdClaim.Value);
+            var addresses = await _addressRepository.GetAllByUserIdAsync(userId);
+            return Ok(addresses);
+        }
 
         [HttpPost]
         [Authorize(Roles = "Customer")]
@@ -36,10 +47,8 @@ namespace FoodDelivery.Api.Controllers
             var result = await _addressRepository.AddAddressAsync(dto, User);
             if (result == null)
                 return Forbid("Unauthorized or invalid token.");
-
             return Ok(result);
         }
-
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Customer")]
@@ -47,10 +56,8 @@ namespace FoodDelivery.Api.Controllers
         {
             var userId = GetUserIdFromToken();
             if (userId == null) return Unauthorized("User ID not found in token.");
-
             var existing = await _addressRepository.GetByUserIdForCustomerAsync(id, userId.Value);
             if (existing == null) return NotFound("Address not found for this user.");
-
             var updatedAddress = new Address
             {
                 AddressId = id,
@@ -63,11 +70,9 @@ namespace FoodDelivery.Api.Controllers
                 Landmark = dto.Landmark,
                 IsDefault = dto.IsDefault
             };
-
             await _addressRepository.UpdateAsync(id, dto, User);
             return NoContent();
         }
-
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Customer")]
@@ -75,20 +80,6 @@ namespace FoodDelivery.Api.Controllers
         {
             await _addressRepository.DeleteAsync(id);
             return NoContent();
-        }
-
-        [HttpGet("my-addresses")]
-        [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> GetMyAddresses()
-        {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
-            if (userIdClaim == null)
-                return Unauthorized("Customer ID not found in token.");
-
-            int userId = int.Parse(userIdClaim.Value);
-            var addresses = await _addressRepository.GetAllByUserIdAsync(userId);
-
-            return Ok(addresses);
         }
     }
 }

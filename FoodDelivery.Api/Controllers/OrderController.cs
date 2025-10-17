@@ -12,13 +12,11 @@ namespace FoodDelivery.Api.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IBillService _assignmentService;
-
         public OrderController(IOrderRepository orderRepository, IBillService assignmentService)
         {
             _orderRepository = orderRepository;
             _assignmentService = assignmentService;
         }
-
 
         [HttpPost("create-from-cart")]
         [Authorize]
@@ -65,13 +63,12 @@ namespace FoodDelivery.Api.Controllers
 
                 if (agent == null)
                     return NotFound("No available delivery agents.");
-
-                await _orderRepository.UpdateOrderAsync(order); // Save agent assignment
+                await _orderRepository.UpdateOrderAsync(order); 
 
                 return Ok(new
                 {
                     Message = "Agent assigned to order.",
-                    AgentId = agent.AgentId,
+                    AgentId = agent.UserId,
                     AgentName = agent.User?.Name ?? "Unknown"
                 });
             }

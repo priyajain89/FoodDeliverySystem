@@ -1,5 +1,4 @@
-﻿
-using FoodDelivery.Domain.Data;
+﻿using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +49,7 @@ public class CartRepository : ICartRepository
             .ThenInclude(ci => ci.Item)
             .FirstOrDefaultAsync(c => c.UserId == customerId);
     }
+
     public async Task<List<Cart>> GetAllCartsWithItemsAsync(int customerId)
     {
         return await _context.Carts
@@ -60,4 +60,29 @@ public class CartRepository : ICartRepository
             .ThenInclude(r => r.User)
             .ToListAsync();
     }
+
+    public async Task<bool> UpdateQuantityAsync(int cartItemId, int quantity)
+    {
+        var cartItem = await _context.CartItems.FindAsync(cartItemId);
+        if (cartItem == null) return false;
+
+        cartItem.Quantity = quantity;
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+
+    public async Task<bool> RemoveItemAsync(int cartItemId)
+    {
+        var cartItem = await _context.CartItems.FindAsync(cartItemId);
+        if (cartItem == null) return false;
+
+        _context.CartItems.Remove(cartItem);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+
+
+
 }

@@ -11,20 +11,17 @@ namespace FoodDelivery.Infrastructure.Repository
     {
         private readonly AppDbContext _context;
         private readonly IGeocodingService _geocodingService;
-
         public AddressRepository(AppDbContext context, IGeocodingService geocodingService)
         {
             _context = context;
             _geocodingService = geocodingService;
         }
 
-        public async Task<IEnumerable<AddressViewDto>> GetAllByUserIdAsync( int userId)
+        public async Task<IEnumerable<AddressViewDto>> GetAllByUserIdAsync(int userId)
         {
             var addresses = await _context.Addresses
                 .Where(a => a.UserId == userId)
                 .ToListAsync();
-
-           
 
             return addresses.Select(a => new AddressViewDto
             {
@@ -46,7 +43,6 @@ namespace FoodDelivery.Infrastructure.Repository
         {
             var address = await _context.Addresses
                 .FirstOrDefaultAsync(a => a.AddressId == addressId && a.UserId == userId);
-
             if (address == null) return null;
 
             return new AddressViewDto
@@ -68,13 +64,14 @@ namespace FoodDelivery.Infrastructure.Repository
         public async Task<AddressViewDto?> AddAddressAsync(AddressAddDto dto, ClaimsPrincipal user)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == "id");
+            //Console.WriteLine(userIdClaim);
             var roleClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            //Console.WriteLine(roleClaim);
 
             if (userIdClaim == null || roleClaim?.Value?.ToLower() != "customer")
                 return null;
 
             int userId = int.Parse(userIdClaim.Value);
-
 
             var fullAddress = string.Join(", ", new[]
             {
@@ -84,10 +81,8 @@ namespace FoodDelivery.Infrastructure.Repository
                 dto.City,
                 dto.State,
                 dto.PinCode?.ToString()
-                }.Where(x => !string.IsNullOrWhiteSpace(x)));
+            }.Where(x => !string.IsNullOrWhiteSpace(x)));
 
-
-           
             var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
 
             var address = new Address
@@ -102,7 +97,6 @@ namespace FoodDelivery.Infrastructure.Repository
                 IsDefault = dto.IsDefault,
                 Latitude = geoResult?.Latitude,
                 Longitude = geoResult?.Longitude
-
             };
 
             _context.Addresses.Add(address);
@@ -141,7 +135,6 @@ namespace FoodDelivery.Infrastructure.Repository
 
             var existingAddress = await _context.Addresses
                 .FirstOrDefaultAsync(a => a.AddressId == addressId && a.UserId == userId);
-
             if (existingAddress == null)
                 return false;
 
@@ -152,11 +145,9 @@ namespace FoodDelivery.Infrastructure.Repository
             existingAddress.PinCode = dto.PinCode;
             existingAddress.Landmark = dto.Landmark;
             existingAddress.IsDefault = dto.IsDefault;
-       
 
             _context.Entry(existingAddress).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-
             return true;
         }
 
@@ -167,13 +158,11 @@ namespace FoodDelivery.Infrastructure.Repository
             {
                 var dbUser = await _context.Users.Include(c => c.Addresses)
                     .FirstOrDefaultAsync(c => c.UserId == address.UserId);
-
                 if (dbUser != null)
                 {
                     dbUser.Addresses.Remove(address);
                 }
-
-                _context.Addresses.Remove(address);
+                //_context.Addresses.Remove(address);
                 await _context.SaveChangesAsync();
             }
         }

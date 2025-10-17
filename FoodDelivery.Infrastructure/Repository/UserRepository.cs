@@ -10,7 +10,6 @@ namespace FoodDelivery.Infrastructure.Repository
     {
         private readonly AppDbContext _context;
         private readonly OtpService _otpService;
-
         public UserRepository(AppDbContext context, OtpService otpService)
         {
             _context = context;
@@ -23,7 +22,6 @@ namespace FoodDelivery.Infrastructure.Repository
         }
 
         public async Task<User?> GetUserByIdAsync(int id)
-
         {
             return await _context.Users.FindAsync(id);
         }
@@ -40,7 +38,6 @@ namespace FoodDelivery.Infrastructure.Repository
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email || u.Phone == phone);
         }
-
 
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(string role)
         {
@@ -64,18 +61,12 @@ namespace FoodDelivery.Infrastructure.Repository
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
-        }
+        }     
 
-        
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
-
-       
-
-      
-
 
     }
 }

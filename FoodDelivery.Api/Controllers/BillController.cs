@@ -18,7 +18,7 @@ namespace FoodDelivery.Api.Controllers
 
         [HttpGet("bill/order/{orderId}")]
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> GetBillFromOrder(int orderId)
+        public async Task<IActionResult> GetBillFromOrder(int orderId) 
         {
             var bill = await _billService.GenerateBillFromOrderAsync(orderId);
             return Ok(bill);

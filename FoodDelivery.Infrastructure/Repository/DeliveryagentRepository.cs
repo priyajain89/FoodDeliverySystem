@@ -16,7 +16,6 @@ namespace FoodDelivery.Infrastructure.Repository
             _context = context;
             _fileService = fileService;
         }
-
        
         public async Task<DeliveryAgent> SubmitAgentDetailsAsync(DeliveryAgent agent, IFormFile? DocumentUrl)
             {
