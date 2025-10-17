@@ -13,6 +13,7 @@ namespace FoodDelivery.Infrastructure.DTO
     }
     public class CartItemDto
     {
+        public int cartItemId { get; set; }
         public int ItemId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
@@ -31,4 +32,9 @@ namespace FoodDelivery.Infrastructure.DTO
         public decimal TotalAmount => Items.Sum(i => i.Price * i.Quantity);
     }
 
+    public class UpdateQuantityDto
+    {
+        public int CartItemId { get; set; }
+        public int Quantity { get; set; }
+    }
 }

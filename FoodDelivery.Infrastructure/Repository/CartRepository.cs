@@ -61,5 +61,28 @@ public class CartRepository : ICartRepository
             .ToListAsync();
     }
 
+    public async Task<bool> UpdateQuantityAsync(int cartItemId, int quantity)
+    {
+        var cartItem = await _context.CartItems.FindAsync(cartItemId);
+        if (cartItem == null) return false;
+
+        cartItem.Quantity = quantity;
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+
+    public async Task<bool> RemoveItemAsync(int cartItemId)
+    {
+        var cartItem = await _context.CartItems.FindAsync(cartItemId);
+        if (cartItem == null) return false;
+
+        _context.CartItems.Remove(cartItem);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+
+
 
 }

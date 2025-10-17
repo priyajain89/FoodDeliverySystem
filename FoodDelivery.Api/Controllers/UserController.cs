@@ -124,9 +124,13 @@ namespace FoodDelivery.Api.Controllers
             }
 
             await _otpService.GenerateOtpAsync(dto.Email);
+<<<<<<< HEAD
 
             return Ok(new { message = "OTP sent successfully to your email." });
 
+=======
+            return Ok(new { message = "OTP sent successfully to your email." });
+>>>>>>> 6a0773a9f9dcd8eea129cd3bcac12c8c4bc10cb9
         }
 
         [HttpPost("verify-otp")]

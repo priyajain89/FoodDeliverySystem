@@ -80,14 +80,20 @@ namespace FoodDelivery.Infrastructure.Repository
                                       .Include(m => m.Restaurant)
                                       .ThenInclude(r => r.User)
                                       .ToListAsync();
-         
+
             return items.Select(i => new MenuItemViewDto
             {
                 ItemId = i.ItemId,
                 Name = i.Name,
+                Description = i.Description,
+                Price = i.Price,
+                IsAvailable = i.IsAvailable,
+                Category = i.Category,
+                FoodImage = i.FoodImage,
                 RestaurantId = i.RestaurantId ?? 0,
                 RestaurantName = i.Restaurant?.User?.Name ?? "Unknown"
             }).ToList();
+
         }
         public async Task<bool> UpdateAsync(int id, MenuItemUpdateDto dto)
         {
