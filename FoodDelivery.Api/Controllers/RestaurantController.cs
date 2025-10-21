@@ -93,6 +93,14 @@ namespace FoodDelivery.Api.Controllers
 
         }
 
+        [HttpGet("getByUserId/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var restaurant = await _repo.GetRestaurantByUserIdAsync(userId);
+            if (restaurant == null) return NotFound("Restaurant not found.");
+            return Ok(restaurant);
+        }
+
         [HttpPut("restaurant/update")]
 
         public async Task<IActionResult> UpdateRestaurant([FromBody] RestaurantIDDto dto)

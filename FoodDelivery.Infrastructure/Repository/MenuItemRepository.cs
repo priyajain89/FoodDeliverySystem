@@ -125,15 +125,36 @@ namespace FoodDelivery.Infrastructure.Repository
                 RestaurantName = restaurantName
             };
         }
-        public async Task<IEnumerable<MenuItem>> SearchAsync(string pinCode, string? restaurantName, string? itemName, string? category, string? city)
+
+        public async Task<List<MenuItem>> GetByRestaurantIdAsync(int restaurantId)
+        {
+            return await _context.MenuItems
+                .Where(item => item.RestaurantId == restaurantId)
+                .Include(item => item.Restaurant)
+                .ThenInclude(r => r.User)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<MenuItem>> SearchByPinCodeAsync(string pinCode)
+        {
+            if (string.IsNullOrWhiteSpace(pinCode))
+                return new List<MenuItem>();
+
+            var query = _context.MenuItems
+                .Include(m => m.Restaurant)
+                .ThenInclude(r => r.User)
+                .Where(m => m.Restaurant.PinCode.ToString() == pinCode);
+
+            return await query.ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<MenuItem>> SearchByFiltersAsync(string? restaurantName, string? itemName, string? category, string? city)
         {
             var query = _context.MenuItems
                 .Include(m => m.Restaurant)
                 .ThenInclude(r => r.User)
                 .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(pinCode))
-                query = query.Where(m => m.Restaurant.PinCode.ToString() == pinCode);
 
             if (!string.IsNullOrWhiteSpace(restaurantName))
                 query = query.Where(m => m.Restaurant.User.Name.Contains(restaurantName));

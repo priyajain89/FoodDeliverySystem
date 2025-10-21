@@ -12,9 +12,11 @@ namespace FoodDelivery.Infrastructure.Repository
     public interface IMenuItemRepository
     {
             Task<MenuItemViewDto?> CreateAsync(MenuItemCreateDto dto, int userId);
-            Task<IEnumerable<MenuItem>> SearchAsync(string pinCode, string? restaurantName, string? itemName, string? category, string? city);
+            Task<IEnumerable<MenuItem>> SearchByPinCodeAsync(string pinCode);
+            Task<IEnumerable<MenuItem>> SearchByFiltersAsync(string? restaurantName, string? itemName, string? category, string? city);
             Task<MenuItemViewDto?> GetByIdAsync(int id);
-            Task<IEnumerable<MenuItemViewDto>> GetAllAsync();
+        Task<List<MenuItem>> GetByRestaurantIdAsync(int restaurantId);
+        Task<IEnumerable<MenuItemViewDto>> GetAllAsync();
             Task<bool> UpdateAsync(int id, MenuItemUpdateDto dto);
             Task<bool> DeleteAsync(int id);
     }

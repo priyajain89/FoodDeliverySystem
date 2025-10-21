@@ -10,5 +10,7 @@ namespace FoodDelivery.Infrastructure.Repository
         Task<Restaurant> SubmitRestaurantDetailsAsync(Restaurant restaurant, IFormFile? fssaiImage, IFormFile? TradelicenseImage);
         Task<List<RestaurantIDDto>> GetAllRestaurantsAsync();
         Task<bool> UpdateRestaurantAsync(RestaurantIDDto dto);
+
+        Task<RestaurantIDDto?> GetRestaurantByUserIdAsync(int userId);
     }
 }

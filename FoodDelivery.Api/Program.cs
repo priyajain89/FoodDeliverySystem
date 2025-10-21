@@ -1,4 +1,4 @@
-using FoodDelivery.Domain.Data;
+﻿using FoodDelivery.Domain.Data;
 
 using FoodDelivery.Domain.Models;
 
@@ -185,6 +185,16 @@ namespace FoodDelivery.Api
 
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200") // Angular dev server
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
 
             var app = builder.Build();
 
@@ -200,6 +210,11 @@ namespace FoodDelivery.Api
 
             }
 
+            app.UseCors("AllowAngularApp");
+
+            // In Program.cs or Startup.cs (assuming a policy named "CorsPolicy")
+
+    
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

@@ -74,5 +74,25 @@ namespace FoodDelivery.Infrastructure.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<RestaurantIDDto?> GetRestaurantByUserIdAsync(int userId)
+        {
+            var restaurant = await _context.Restaurants
+                .Where(r => r.UserId == userId)
+                .Select(r => new RestaurantIDDto
+                {
+                    RestaurantId = r.RestaurantId,
+                    UserId = r.UserId ?? 0,
+                    Address = r.Address,
+                    FssaiId = r.FssaiId,
+                    PinCode = r.PinCode,
+                    FssaiImage = r.FssaiImage,
+                    TradelicenseImage = r.TradelicenseImage,
+                    TradeId = r.TradeId
+                })
+                .FirstOrDefaultAsync();
+
+            return restaurant;
+        }
     }
 }

@@ -23,8 +23,6 @@ namespace FoodDelivery.Infrastructure.DTO
         public string? Address { get; set; }
         public string? FssaiId { get; set; }
         public int? PinCode { get; set; }
-        //public string? FssaiImage { get; set; }
-        //public string? TradelicenseImage { get; set; }
         public string? TradeId { get; set; }
 
         public IFormFile? FssaiImage { get; set; } // ✅ File input
