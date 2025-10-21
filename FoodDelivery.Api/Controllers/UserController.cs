@@ -99,10 +99,6 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-<<<<<<< HEAD
-        //Login & OTP
-=======
->>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
         [HttpPost("login-request")]
 
         public async Task<IActionResult> LoginRequest([FromBody] RequestOtpDTO dto)
@@ -127,17 +123,9 @@ namespace FoodDelivery.Api.Controllers
 
             }
 
-<<<<<<< HEAD
             await _otpService.GenerateOtpAsync(dto.Email);
             return Ok(new { message = "OTP sent successfully to your email." });
-=======
 
-
-            return Ok(new { message = "OTP sent successfully to your email." });
-
-
-      
->>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
         }
 
         [HttpPost("verify-otp")]
