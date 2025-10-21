@@ -26,8 +26,7 @@ namespace FoodDelivery.Infrastructure.Services
                 new Claim("name", name),
                 new Claim("Email",email),
 
-                new Claim("Role", role),          // custom claim for frontend
-
+                new Claim("Role",role),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
             };
