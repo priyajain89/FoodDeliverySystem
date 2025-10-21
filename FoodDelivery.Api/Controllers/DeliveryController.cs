@@ -7,7 +7,7 @@ using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
 
 using FoodDelivery.Infrastructure.Repository;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
 using Microsoft.AspNetCore.Mvc;
@@ -57,8 +57,6 @@ namespace FoodDelivery.Api.Controllers
 
             var fullAddress = $"{dto.Address}";
 
-            // Get coordinates from geocoding service
-
             var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
 
             var agent = new DeliveryAgent
@@ -93,16 +91,24 @@ namespace FoodDelivery.Api.Controllers
 
 
         [HttpPut("delivery-agent/update")]
-
-        public async Task<IActionResult> UpdateDeliveryAgent([FromBody] DeliveryAgentResponseDto dto)
-
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UpdateDeliveryAgent([FromForm] DeliveryAgentDTO dto)
         {
+            var fullAddress = $"{dto.Address}";
+            var geoResult = await _geocodingService.GetCoordinatesAsync(fullAddress);
 
-            var result = await _repo.UpdateDeliveryAgentAsync(dto);
-
-            if (!result) return NotFound("Delivery agent not found.");
-
-            return Ok("Delivery agent updated successfully.");
+            var agent = new DeliveryAgent
+            {
+                UserId = dto.UserId,
+                Latitude = geoResult?.Latitude,
+                Longitude = geoResult?.Longitude,
+                Address = dto.Address
+            };
+            var result = await _repo.UpdateDeliveryAgentAsync(agent, dto.DocumentUrl);
+            if (!result) { 
+                return NotFound("Delivery agent not found.");
+            }
+            return Ok(new { message = "Delivery agent updated successfully." });
 
         }
 

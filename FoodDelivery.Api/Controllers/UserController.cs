@@ -111,11 +111,11 @@ namespace FoodDelivery.Api.Controllers
 
             if (user.IsVerified != null && user.IsVerified == false)
             {
-                return Unauthorized("Your account is not verified.");
+                return Unauthorized("Your account is not verified. Please contact support.");
             }
 
             await _otpService.GenerateOtpAsync(dto.Email);
-            return Ok("OTP sent successfully to your email.");
+            return Ok(new { message = "OTP sent successfully to your email." });
         }
 
         [HttpPost("verify-otp")]

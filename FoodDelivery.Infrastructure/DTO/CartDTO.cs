@@ -13,6 +13,7 @@ namespace FoodDelivery.Infrastructure.DTO
     }
     public class CartItemDto
     {
+        public int cartItemId { get; set; }
         public int ItemId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }

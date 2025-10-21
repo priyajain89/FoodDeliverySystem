@@ -3,7 +3,6 @@ using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.Repository;
 using FoodDelivery.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
-
 namespace FoodDelivery.Infrastructure.Repository
 {
     public class UserRepository : IUserRepository
