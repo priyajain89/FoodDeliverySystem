@@ -100,7 +100,6 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-        //Login & OPT
         [HttpPost("login-request")]
 
         public async Task<IActionResult> LoginRequest([FromBody] RequestOtpDTO dto)
@@ -125,10 +124,19 @@ namespace FoodDelivery.Api.Controllers
 
             }
 
+<<<<<<< HEAD
             await _otpService.GenerateOtpAsync(dto.Email);
 
             return Ok(new { message = "OTP sent successfully to your email." });
 
+=======
+
+
+            return Ok(new { message = "OTP sent successfully to your email." });
+
+
+      
+>>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
         }
 
         [HttpPost("verify-otp")]
@@ -153,7 +161,9 @@ namespace FoodDelivery.Api.Controllers
 
             string tokenString = jwtTokenString.GenerateJWT(user.UserId.ToString(), user.Name, user.Email, user.Role);
 
+
             return Ok(new
+<<<<<<< HEAD
 
             {
 
@@ -165,6 +175,24 @@ namespace FoodDelivery.Api.Controllers
             });
 
         }
+=======
+
+            {
+
+                message = "OTP verified successfully. You are Logged in.",
+
+                token = tokenString,
+                role = user.Role,
+                
+
+
+
+            });
+
+        }
+
+
+>>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
     }
 
 }

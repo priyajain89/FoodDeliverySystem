@@ -196,6 +196,8 @@ namespace FoodDelivery.Api
                     });
             });
 
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -207,9 +209,15 @@ namespace FoodDelivery.Api
                 app.UseSwagger();
 
                 app.UseSwaggerUI();
+<<<<<<< HEAD
 
             }
 
+=======
+                
+            }
+            app.UseStaticFiles();
+>>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
             app.UseCors("AllowAngularApp");
 
             // In Program.cs or Startup.cs (assuming a policy named "CorsPolicy")

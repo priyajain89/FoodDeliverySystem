@@ -37,7 +37,7 @@ namespace FoodDelivery.Api.Controllers
         {
             var success = await _adminRepo.VerifyUserAsync(dto.UserId, dto.Role);
             if (!success) return NotFound("User not found or role mismatch.");
-            return Ok($"{dto.Role} with ID {dto.UserId} verified successfully.");
+            return Ok(new { success = true, message = $"{dto.Role} with ID {dto.UserId} verified successfully." });
         }
     }
 }

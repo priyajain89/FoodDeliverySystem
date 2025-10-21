@@ -80,13 +80,23 @@ namespace FoodDelivery.Infrastructure.Repository
                                       .Include(m => m.Restaurant)
                                       .ThenInclude(r => r.User)
                                       .ToListAsync();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
             return items.Select(i => new MenuItemViewDto
             {
                 ItemId = i.ItemId,
                 Name = i.Name,
+                Description = i.Description,
+                Price = i.Price,
+                IsAvailable = i.IsAvailable,
+                Category = i.Category,
+                FoodImage = i.FoodImage,
                 RestaurantId = i.RestaurantId ?? 0,
                 RestaurantName = i.Restaurant?.User?.Name ?? "Unknown"
             }).ToList();
+
         }
         public async Task<bool> UpdateAsync(int id, MenuItemUpdateDto dto)
         {
@@ -149,11 +159,20 @@ namespace FoodDelivery.Infrastructure.Repository
         }
 
 
-        public async Task<IEnumerable<MenuItem>> SearchByFiltersAsync(string? restaurantName, string? itemName, string? category, string? city)
+        public async Task<IEnumerable<MenuItem>> SearchByFiltersAsync(
+     string pinCode,
+     string? restaurantName,
+     string? itemName,
+     string? category,
+     string? city)
         {
+            if (!int.TryParse(pinCode, out int parsedPin))
+                return Enumerable.Empty<MenuItem>();
+
             var query = _context.MenuItems
                 .Include(m => m.Restaurant)
-                .ThenInclude(r => r.User)
+                    .ThenInclude(r => r.User)
+                .Where(m => m.Restaurant.PinCode == parsedPin)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(restaurantName))
@@ -170,6 +189,5 @@ namespace FoodDelivery.Infrastructure.Repository
 
             return await query.ToListAsync();
         }
-
     }
 }

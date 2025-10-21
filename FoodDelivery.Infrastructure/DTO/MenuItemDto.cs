@@ -30,8 +30,8 @@ namespace FoodDelivery.Infrastructure.DTO
         public int ItemId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public decimal Price { get; set; }
-        public bool IsAvailable { get; set; }
+        public decimal? Price { get; set; }
+        public bool? IsAvailable { get; set; }
         public string Category { get; set; } = string.Empty;
         public string? FoodImage { get; set; }
         public int RestaurantId { get; set; }

@@ -118,17 +118,22 @@ namespace FoodDelivery.Api.Controllers
 
         [HttpGet("search-by-filters")]
         public async Task<IActionResult> SearchByFilters(
-        [FromQuery] string? restaurantName,
-        [FromQuery] string? itemName,
-        [FromQuery] string? category,
-        [FromQuery] string? city)
+    [FromQuery] string pinCode,
+    [FromQuery] string? restaurantName,
+    [FromQuery] string? itemName,
+    [FromQuery] string? category,
+    [FromQuery] string? city)
         {
-            var items = await _repo.SearchByFiltersAsync(restaurantName, itemName, category, city);
+            if (string.IsNullOrWhiteSpace(pinCode))
+            {
+                return BadRequest("Pin code is required.");
+            }
+
+            var items = await _repo.SearchByFiltersAsync(pinCode, restaurantName, itemName, category, city);
 
             var result = items.Select(item => new MenuItemViewDto
             {
                 ItemId = item.ItemId,
-
                 Name = item.Name ?? string.Empty,
                 Description = item.Description,
                 Price = item.Price ?? 0,
