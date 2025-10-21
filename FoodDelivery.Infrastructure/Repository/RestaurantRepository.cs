@@ -39,52 +39,53 @@ namespace FoodDelivery.Infrastructure.Repository
             return restaurant;
         }
 
-        public async Task<List<RestaurantIDDto>> GetAllRestaurantsAsync()
+        //public async Task<List<RestaurantIDDto>> GetAllRestaurantsAsync()
+        //{
+        //    var restaurants = await _context.Restaurants
+        //        .Select(r => new RestaurantIDDto
+        //        {
+        //            RestaurantId = r.RestaurantId,
+        //            UserId = r.UserId ?? 0,
+
+        //            Address = r.Address,
+        //            FssaiId = r.FssaiId,
+        //            PinCode = r.PinCode,
+        //            FssaiImage = r.FssaiImage,
+        //            TradelicenseImage = r.TradelicenseImage,
+        //            TradeId = r.TradeId,
+        //        })
+        //        .ToListAsync();
+
+        //    return restaurants;
+        //}
+
+        public async Task<List<RestaurantDto>> GetAllRestaurantsAsync()
         {
-            var restaurants = await _context.Restaurants
-                .Select(r => new RestaurantIDDto
+            var restaurants = await _context.Users
+                .Where(u => u.Role == "Restaurant") // Optional: filter by role
+                .Select(u => new RestaurantDto
                 {
-                    RestaurantId = r.RestaurantId,
-                    UserId = r.UserId ?? 0,
-                    Address = r.Address,
-                    FssaiId = r.FssaiId,
-                    PinCode = r.PinCode,
-                    FssaiImage = r.FssaiImage,
-                    TradelicenseImage = r.TradelicenseImage,
-                    TradeId = r.TradeId,
+                    UserId = u.UserId,
+                    Name = u.Name,
+                    Email = u.Email,
+                    Phone = u.Phone,
+                    
+                    Role = u.Role,
+                    SubmittedRestaurants = u.Restaurants.Select(r => new RestaurantGetResponseDto
+                    {
+                        Address = r.Address,
+                        FssaiId = r.FssaiId,
+                        PinCode = r.PinCode,
+                       
+                        TradeId = r.TradeId
+                    }).ToList()
                 })
                 .ToListAsync();
 
             return restaurants;
         }
-        //public async Task<IEnumerable<RestaurantDto>> GetUnverifiedRestaurantsAsync()
-        //{
-        //    return await _context.Users
-        //        .Where(u => u.Role == "Restaurant" && u.IsVerified == false)
-        //        .Where(u => u.Restaurants.Any())
-        //        .Include(u => u.Restaurants)
-        //        .Select(u => new RestaurantDto
-        //        {
-        //            UserId = u.UserId,
-        //            Name = u.Name,
-        //            Email = u.Email,
-        //            Phone = u.Phone,
 
-        //            Role = u.Role,
-        //            SubmittedRestaurants = u.Restaurants.Select(r => new RestaurantIDDto
-        //            {
-        //                RestaurantId = r.RestaurantId,
-        //                UserId = r.UserId,
-        //                Address = r.Address,
-        //                FssaiId = r.FssaiId,
-        //                PinCode = r.PinCode,
-        //                FssaiImage = r.FssaiImage,
-        //                TradelicenseImage = r.TradelicenseImage,
-        //                TradeId = r.TradeId
-        //            }).ToList()
-        //        })
-        //        .ToListAsync();
-        //}
+
 
         public async Task<bool> UpdateRestaurantAsync(RestaurantIDDto dto)
         {

@@ -25,6 +25,7 @@ namespace FoodDelivery.Infrastructure.Services
                 new Claim("id", id.ToString()),
                 new Claim("name", name),
                 new Claim("Email",email),
+
                 new Claim("Role",role),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
@@ -35,7 +36,7 @@ namespace FoodDelivery.Infrastructure.Services
                   issuer: "FoodDelivery.com",
                   audience: "customer",
                   claims: claims,
-                  expires: DateTime.Now.AddHours(1),
+                  expires: DateTime.Now.AddMinutes(30),
                   signingCredentials: securityCredentials
                 );
             var tokenS = new JwtSecurityTokenHandler();

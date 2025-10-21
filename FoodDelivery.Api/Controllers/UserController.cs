@@ -122,7 +122,6 @@ namespace FoodDelivery.Api.Controllers
                 return Unauthorized("Your account is not verified. Please contact support.");
 
             }
-
             await _otpService.GenerateOtpAsync(dto.Email);
 
             return Ok(new { message = "OTP sent successfully to your email." });
@@ -151,6 +150,7 @@ namespace FoodDelivery.Api.Controllers
 
             string tokenString = jwtTokenString.GenerateJWT(user.UserId.ToString(), user.Name, user.Email, user.Role);
 
+
             return Ok(new
 
             {
@@ -158,7 +158,9 @@ namespace FoodDelivery.Api.Controllers
                 message = "OTP verified successfully. You are Logged in.",
 
                 token = tokenString,
+
                 role=user.Role
+
 
             });
 
