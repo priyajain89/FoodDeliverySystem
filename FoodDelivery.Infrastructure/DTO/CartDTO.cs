@@ -32,4 +32,9 @@ namespace FoodDelivery.Infrastructure.DTO
         public decimal TotalAmount => Items.Sum(i => i.Price * i.Quantity);
     }
 
+    public class UpdateQuantityDto
+    {
+        public int CartItemId { get; set; }
+        public int Quantity { get; set; }
+    }
 }

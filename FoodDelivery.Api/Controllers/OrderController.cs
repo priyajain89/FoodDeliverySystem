@@ -19,7 +19,7 @@ namespace FoodDelivery.Api.Controllers
         }
 
         [HttpPost("create-from-cart")]
-        [Authorize]
+        
         public async Task<IActionResult> CreateOrderFromCart([FromBody] CreateOrderFromCartDto dto)
         {
             try

@@ -26,9 +26,10 @@ public partial class CartItem
     [InverseProperty("CartItems")]
     public virtual Cart? Cart { get; set; }
 
-    [JsonIgnore]
+    
     [ForeignKey("ItemId")]
     [InverseProperty("CartItems")]
 
+   
     public virtual MenuItem? Item { get; set; }
 }

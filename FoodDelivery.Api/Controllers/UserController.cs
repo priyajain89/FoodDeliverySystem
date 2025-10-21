@@ -99,44 +99,86 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
+<<<<<<< HEAD
         //Login & OTP
+=======
+>>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
         [HttpPost("login-request")]
+
         public async Task<IActionResult> LoginRequest([FromBody] RequestOtpDTO dto)
+
         {
+
             var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+
             if (user == null)
+
             {
+
                 return Unauthorized("You are not a registered user.");
+
             }
 
             if (user.IsVerified != null && user.IsVerified == false)
+
             {
+
                 return Unauthorized("Your account is not verified. Please contact support.");
+
             }
 
+<<<<<<< HEAD
             await _otpService.GenerateOtpAsync(dto.Email);
             return Ok(new { message = "OTP sent successfully to your email." });
+=======
+
+
+            return Ok(new { message = "OTP sent successfully to your email." });
+
+
+      
+>>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
         }
 
         [HttpPost("verify-otp")]
+
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDTO dto)
+
         {
+
             var isValid = _otpService.VerifyOtp(dto.Email, dto.Otp);
+
             if (!isValid)
+
             {
+
                 return Unauthorized("Invalid OTP or email.");
+
             }
 
             var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+
             TokenGeneration jwtTokenString = new TokenGeneration(_configuration);
+
             string tokenString = jwtTokenString.GenerateJWT(user.UserId.ToString(), user.Name, user.Email, user.Role);
 
+
             return Ok(new
+
             {
+
                 message = "OTP verified successfully. You are Logged in.",
-                token = tokenString
+
+                token = tokenString,
+                role = user.Role,
+                
+
+
+
             });
+
         }
+
 
     }
 

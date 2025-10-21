@@ -15,7 +15,7 @@ namespace FoodDelivery.Infrastructure.DTO
         public string Phone { get; set; } = null!;
         public bool IsVerified { get; set; }
         public string Role { get; set; } = null!;
-        public List<RestaurantResponseDto> SubmittedRestaurants { get; set; } = new();
+        public List<RestaurantGetResponseDto> SubmittedRestaurants { get; set; } = new();
     }
     public class RestaurantResponseDto
     {
@@ -33,7 +33,7 @@ namespace FoodDelivery.Infrastructure.DTO
     public class RestaurantIDDto
     {
         public int RestaurantId { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public string? Address { get; set; }
         public string? FssaiId { get; set; }
         public int? PinCode { get; set; }
@@ -41,5 +41,15 @@ namespace FoodDelivery.Infrastructure.DTO
         public string? TradelicenseImage { get; set; }
         public string? TradeId { get; set; }
        
+    }
+    public class RestaurantGetResponseDto
+    {
+       
+        public string? Address { get; set; }
+        public string? FssaiId { get; set; }
+        public int? PinCode { get; set; }
+        public string? FssaiImage { get; set; } // ✅ string for image path or URL
+        public string? TradelicenseImage { get; set; } // ✅ string for image path or URL
+        public string? TradeId { get; set; }
     }
 }

@@ -80,13 +80,20 @@ namespace FoodDelivery.Infrastructure.Repository
                                       .Include(m => m.Restaurant)
                                       .ThenInclude(r => r.User)
                                       .ToListAsync();
+
             return items.Select(i => new MenuItemViewDto
             {
                 ItemId = i.ItemId,
                 Name = i.Name,
+                Description = i.Description,
+                Price = i.Price,
+                IsAvailable = i.IsAvailable,
+                Category = i.Category,
+                FoodImage = i.FoodImage,
                 RestaurantId = i.RestaurantId ?? 0,
                 RestaurantName = i.Restaurant?.User?.Name ?? "Unknown"
             }).ToList();
+
         }
         public async Task<bool> UpdateAsync(int id, MenuItemUpdateDto dto)
         {
@@ -125,15 +132,37 @@ namespace FoodDelivery.Infrastructure.Repository
                 RestaurantName = restaurantName
             };
         }
-        public async Task<IEnumerable<MenuItem>> SearchAsync(string pinCode, string? restaurantName, string? itemName, string? category, string? city)
+
+
+        public async Task<IEnumerable<MenuItem>> SearchByPinCodeAsync(string pinCode)
         {
+            if (string.IsNullOrWhiteSpace(pinCode))
+                return new List<MenuItem>();
+
             var query = _context.MenuItems
                 .Include(m => m.Restaurant)
                 .ThenInclude(r => r.User)
-                .AsQueryable();
+                .Where(m => m.Restaurant.PinCode.ToString() == pinCode);
 
-            if (!string.IsNullOrWhiteSpace(pinCode))
-                query = query.Where(m => m.Restaurant.PinCode.ToString() == pinCode);
+            return await query.ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<MenuItem>> SearchByFiltersAsync(
+     string pinCode,
+     string? restaurantName,
+     string? itemName,
+     string? category,
+     string? city)
+        {
+            if (!int.TryParse(pinCode, out int parsedPin))
+                return Enumerable.Empty<MenuItem>();
+
+            var query = _context.MenuItems
+                .Include(m => m.Restaurant)
+                    .ThenInclude(r => r.User)
+                .Where(m => m.Restaurant.PinCode == parsedPin)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(restaurantName))
                 query = query.Where(m => m.Restaurant.User.Name.Contains(restaurantName));
@@ -149,6 +178,5 @@ namespace FoodDelivery.Infrastructure.Repository
 
             return await query.ToListAsync();
         }
-
     }
 }

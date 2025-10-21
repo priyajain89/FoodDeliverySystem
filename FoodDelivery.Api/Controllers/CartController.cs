@@ -1,5 +1,15 @@
+<<<<<<< HEAD
 using FoodDelivery.Domain.Models;
 
+=======
+
+﻿
+using FoodDelivery.Domain.Models;
+
+
+﻿using FoodDelivery.Domain.Models;
+
+>>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
 using FoodDelivery.Infrastructure.DTO;
 
 using FoodDelivery.Infrastructure.Repository;
@@ -102,6 +112,10 @@ public class CartController : ControllerBase
 
     }
 
+
+   
+
+
     [HttpGet("customer-carts")]
     public async Task<IActionResult> GetCustomerCarts()
     {
@@ -118,6 +132,7 @@ public class CartController : ControllerBase
 
         var result = carts.Select(cart => new CartViewDto
         {
+            
             CartId = cart.CartId,
             CustomerId = cart.UserId ?? 0,
             RestaurantId = cart.RestaurantId ?? 0,
@@ -137,5 +152,28 @@ public class CartController : ControllerBase
         return Ok(result);
     }
 
+<<<<<<< HEAD
+=======
+    [HttpPut("update-quantity")]
+    public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityDto dto)
+    {
+        var success = await _cartRepository.UpdateQuantityAsync(dto.CartItemId, dto.Quantity);
+        if (!success) return NotFound("Cart item not found");
+
+        return Ok("Quantity updated successfully");
+    }
+
+
+    [HttpDelete("remove-item/{cartItemId}")]
+    public async Task<IActionResult> RemoveItem(int cartItemId)
+    {
+        var success = await _cartRepository.RemoveItemAsync(cartItemId);
+        if (!success) return NotFound("Cart item not found");
+
+        return Ok("Item removed successfully");
+    }
+
+>>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
 }
+
 
