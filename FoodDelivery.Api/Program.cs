@@ -186,16 +186,24 @@ namespace FoodDelivery.Api
             });
 
             builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAngularApp",
-                    policy =>
-                    {
-                        policy.WithOrigins("http://localhost:4200") // Angular dev server
-                              .AllowAnyHeader()
-                              .AllowAnyMethod();
-                    });
-            });
 
+            {
+
+                options.AddPolicy("AllowAngularApp",
+
+                    policy =>
+
+                    {
+
+                        policy.WithOrigins("http://localhost:4200") // Angular dev server
+
+                              .AllowAnyHeader()
+
+                              .AllowAnyMethod();
+
+                    });
+
+            });
 
 
             var app = builder.Build();
@@ -209,20 +217,13 @@ namespace FoodDelivery.Api
                 app.UseSwagger();
 
                 app.UseSwaggerUI();
-<<<<<<< HEAD
 
             }
 
-=======
-                
-            }
             app.UseStaticFiles();
->>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
+
             app.UseCors("AllowAngularApp");
 
-            // In Program.cs or Startup.cs (assuming a policy named "CorsPolicy")
-
-    
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

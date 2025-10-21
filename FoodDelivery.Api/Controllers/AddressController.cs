@@ -80,14 +80,14 @@ namespace FoodDelivery.Api.Controllers
 
         {
 
-<<<<<<< HEAD
-=======
             if (!ModelState.IsValid)
+
             {
+
                 return BadRequest(ModelState); // This will return detailed validation errors
+
             }
 
->>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
             var result = await _addressRepository.AddAddressAsync(dto, User);
 
             if (result == null)

@@ -80,10 +80,7 @@ namespace FoodDelivery.Infrastructure.Repository
                                       .Include(m => m.Restaurant)
                                       .ThenInclude(r => r.User)
                                       .ToListAsync();
-<<<<<<< HEAD
-=======
 
->>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
             return items.Select(i => new MenuItemViewDto
             {
                 ItemId = i.ItemId,

@@ -1,102 +1,166 @@
-using FoodDelivery.Domain.Data;
 using FoodDelivery.Domain.Models;
+
+using FoodDelivery.Domain.Data;
+
 using FoodDelivery.Infrastructure.DTO;
-using FoodDelivery.Infrastructure.Repository;
+
 using FoodDelivery.Infrastructure.Services;
-using Microsoft.AspNetCore.Authorization;
+
+using FoodDelivery.Infrastructure.Repository;
+
 using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.Extensions.Configuration;
+
 using System.Collections.Concurrent;
 
 namespace FoodDelivery.Api.Controllers
+
 {
 
     [ApiController]
+
     [Route("api/[controller]")]
 
     public class UserController : ControllerBase
+
     {
+
         private readonly IUserRepository _userRepository;
+
         private readonly IConfiguration _configuration;
+
         private readonly OtpService _otpService;
 
         public UserController(IUserRepository userRepository, OtpService otpService, IConfiguration configuration)
+
         {
+
             _configuration = configuration;
+
             _userRepository = userRepository;
+
             _otpService = otpService;
+
         }
 
         [HttpGet("all")]
+
         public async Task<IActionResult> GetAll()
+
         {
+
             var users = await _userRepository.GetAllUsersAsync();
+
             return Ok(users);
+
         }
 
 
         [HttpGet("{id}")]
+
         public async Task<IActionResult> GetById(int id)
+
         {
+
             var user = await _userRepository.GetUserByIdAsync(id);
+
             if (user == null) return NotFound();
+
             return Ok(user);
+
         }
 
 
         [HttpPost("register")]
+
         public async Task<IActionResult> Create([FromBody] UserDto dto)
+
         {
+
             var existingUser = await _userRepository.GetUserByEmailOrPhoneAsync(dto.Email, dto.Phone);
+
             if (existingUser != null)
+
             {
+
                 return Conflict("User with this email or phone already exists.");
+
             }
 
             var user = new User
+
             {
+
                 Name = dto.Name,
+
                 Email = dto.Email,
+
                 Phone = dto.Phone,
+
                 Role = dto.Role,
+
                 IsVerified = dto.Role.ToLower() == "customer" || dto.Role.ToLower() == "admin"
+
             };
 
             var created = await _userRepository.CreateUserAsync(user);
 
             return Ok(new { message = "Successfully registered", userId = created.UserId });
+
         }
 
 
-
         [HttpGet("role/{role}")]
+
         public async Task<IActionResult> GetByRole(string role)
+
         {
+
             var users = await _userRepository.GetUsersByRoleAsync(role);
+
             return Ok(users);
+
         }
 
 
         [HttpPut("update/{id}")]
+
         public async Task<IActionResult> Update(int id, [FromBody] UserDto dto)
+
         {
+
             var user = await _userRepository.GetUserByIdAsync(id);
+
             if (user == null) return NotFound();
+
             user.Name = dto.Name;
+
             user.Email = dto.Email;
+
             user.Phone = dto.Phone;
+
             user.Role = dto.Role;
+
             var updated = await _userRepository.UpdateUserAsync(user);
+
             return Ok(updated);
+
         }
 
 
         [HttpDelete("delete/{id}")]
+
         public async Task<IActionResult> Delete(int id)
+
         {
+
             var success = await _userRepository.DeleteUserAsync(id);
+
             if (!success) return NotFound();
+
             return NoContent();
+
         }
 
 
@@ -124,19 +188,12 @@ namespace FoodDelivery.Api.Controllers
 
             }
 
-<<<<<<< HEAD
-            await _otpService.GenerateOtpAsync(dto.Email);
-
-            return Ok(new { message = "OTP sent successfully to your email." });
-
-=======
-
 
             return Ok(new { message = "OTP sent successfully to your email." });
 
 
-      
->>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
+
+
         }
 
         [HttpPost("verify-otp")]
@@ -163,27 +220,14 @@ namespace FoodDelivery.Api.Controllers
 
 
             return Ok(new
-<<<<<<< HEAD
 
             {
 
                 message = "OTP verified successfully. You are Logged in.",
 
                 token = tokenString,
-                role = user.Role
 
-            });
-
-        }
-=======
-
-            {
-
-                message = "OTP verified successfully. You are Logged in.",
-
-                token = tokenString,
                 role = user.Role,
-                
 
 
 
@@ -192,7 +236,6 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
->>>>>>> 6a212d3c95d9956cb5ea63677267d50a7d221ef3
     }
 
 }
