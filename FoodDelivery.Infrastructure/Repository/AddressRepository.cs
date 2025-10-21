@@ -34,8 +34,8 @@ namespace FoodDelivery.Infrastructure.Repository
                 PinCode = a.PinCode,
                 Landmark = a.Landmark,
                 IsDefault = a.IsDefault,
-                Latitude = a.Latitude,
-                Longitude = a.Longitude
+                //Latitude = a.Latitude,
+                //Longitude = a.Longitude
             });
         }
 
@@ -56,8 +56,8 @@ namespace FoodDelivery.Infrastructure.Repository
                 PinCode = address.PinCode,
                 Landmark = address.Landmark,
                 IsDefault = address.IsDefault,
-                Latitude = address.Latitude,
-                Longitude = address.Longitude
+                //Latitude = address.Latitude,
+                //Longitude = address.Longitude
             };
         }
 
@@ -122,8 +122,8 @@ namespace FoodDelivery.Infrastructure.Repository
                 PinCode = address.PinCode,
                 Landmark = address.Landmark,
                 IsDefault = address.IsDefault,
-                Latitude = address.Latitude,
-                Longitude = address.Longitude
+                //Latitude = address.Latitude,
+                //Longitude = address.Longitude
             };
         }
 

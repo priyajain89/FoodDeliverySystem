@@ -124,6 +124,7 @@ namespace FoodDelivery.Api
                 app.UseSwaggerUI();
                 
             }
+            app.UseStaticFiles();
             app.UseCors("AllowAngularApp");
 
             app.UseHttpsRedirection();

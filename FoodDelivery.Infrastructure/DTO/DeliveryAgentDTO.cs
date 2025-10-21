@@ -21,6 +21,19 @@ namespace FoodDelivery.Infrastructure.DTO
             public string? DocumentUrl { get; set; }
             public string? Address { get; set; }
         }
+    public class DeliveryAgentGetDto
+    {
+        public int UserId { get; set; }
+        public int AgentId { get; set; }
+        public string? Address { get; set; }
+        public string? DocumentUrl { get; set; }
+
+        // Add these fields from the User entity
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+    }
+
 }
 
 

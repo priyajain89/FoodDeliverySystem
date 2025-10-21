@@ -5,8 +5,8 @@ namespace FoodDelivery.Infrastructure.Repository
 {
     public interface IAdminRepository
     {
-        Task<IEnumerable<User>> GetUnverifiedRestaurantsAsync();
-        Task<IEnumerable<User>> GetUnverifiedAgentsAsync();
+        Task<IEnumerable<RestaurantDto>> GetUnverifiedRestaurantsAsync();
+        Task<IEnumerable<DeliveryAgentGetDto>> GetUnverifiedAgentsAsync();
         Task<bool> VerifyUserAsync(int userId, string role);
     }
 }

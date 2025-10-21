@@ -44,6 +44,12 @@ namespace FoodDelivery.Api.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> AddAddress(AddressAddDto dto)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // This will return detailed validation errors
+            }
+
             var result = await _addressRepository.AddAddressAsync(dto, User);
             if (result == null)
                 return Forbid("Unauthorized or invalid token.");
