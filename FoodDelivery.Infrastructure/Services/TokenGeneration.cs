@@ -25,6 +25,7 @@ namespace FoodDelivery.Infrastructure.Services
                 new Claim("id", id.ToString()),
                 new Claim("name", name),
                 new Claim("Email",email),
+                new Claim("Role",role),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
             };
