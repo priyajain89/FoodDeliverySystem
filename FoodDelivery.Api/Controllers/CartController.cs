@@ -112,9 +112,10 @@ public class CartController : ControllerBase
     public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityDto dto)
     {
         var success = await _cartRepository.UpdateQuantityAsync(dto.CartItemId, dto.Quantity);
-        if (!success) return NotFound("Cart item not found");
+        if (!success)
+            return NotFound(new { message = "Cart item not found" });
 
-        return Ok("Quantity updated successfully");
+        return Ok(new { message = "Quantity updated successfully" });
     }
 
 
@@ -122,11 +123,11 @@ public class CartController : ControllerBase
     public async Task<IActionResult> RemoveItem(int cartItemId)
     {
         var success = await _cartRepository.RemoveItemAsync(cartItemId);
-        if (!success) return NotFound("Cart item not found");
+        if (!success)
+            return NotFound(new { message = "Cart item not found" });
 
-        return Ok("Item removed successfully");
+        return Ok(new { message = "Item removed successfully" });
     }
-
 }
 
 
