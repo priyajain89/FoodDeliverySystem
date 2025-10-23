@@ -49,5 +49,7 @@ namespace FoodDelivery.Infrastructure.DTO
         public string? FssaiImage { get; set; } // ✅ string for image path or URL
         public string? TradelicenseImage { get; set; } // ✅ string for image path or URL
         public string? TradeId { get; set; }
+        public int OrderCount { get; set; }
+
     }
 }

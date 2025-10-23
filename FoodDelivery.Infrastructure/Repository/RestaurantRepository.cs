@@ -59,25 +59,50 @@ namespace FoodDelivery.Infrastructure.Repository
         //    return restaurants;
         //}
 
+        //public async Task<List<RestaurantDto>> GetAllRestaurantsAsync()
+        //{
+        //    var restaurants = await _context.Users
+        //        .Where(u => u.Role == "Restaurant") // Optional: filter by role
+        //        .Select(u => new RestaurantDto
+        //        {
+        //            UserId = u.UserId,
+        //            Name = u.Name,
+        //            Email = u.Email,
+        //            Phone = u.Phone,
+
+        //            Role = u.Role,
+        //            SubmittedRestaurants = u.Restaurants.Select(r => new RestaurantGetResponseDto
+        //            {
+        //                Address = r.Address,
+        //                FssaiId = r.FssaiId,
+        //                PinCode = r.PinCode,
+
+        //                TradeId = r.TradeId
+        //            }).ToList()
+        //        })
+        //        .ToListAsync();
+
+        //    return restaurants;
+        //}
+
         public async Task<List<RestaurantDto>> GetAllRestaurantsAsync()
         {
             var restaurants = await _context.Users
-                .Where(u => u.Role == "Restaurant") // Optional: filter by role
+                .Where(u => u.Role == "Restaurant" && u.IsVerified == true)
                 .Select(u => new RestaurantDto
                 {
                     UserId = u.UserId,
                     Name = u.Name,
                     Email = u.Email,
                     Phone = u.Phone,
-                    
                     Role = u.Role,
                     SubmittedRestaurants = u.Restaurants.Select(r => new RestaurantGetResponseDto
                     {
                         Address = r.Address,
                         FssaiId = r.FssaiId,
                         PinCode = r.PinCode,
-                       
-                        TradeId = r.TradeId
+                        TradeId = r.TradeId,
+                        OrderCount = _context.Orders.Count(o => o.RestaurantId == r.RestaurantId)
                     }).ToList()
                 })
                 .ToListAsync();
@@ -85,14 +110,12 @@ namespace FoodDelivery.Infrastructure.Repository
             return restaurants;
         }
 
-
-
         public async Task<bool> UpdateRestaurantAsync(RestaurantIDDto dto)
         {
             var restaurant = await _context.Restaurants.FindAsync(dto.RestaurantId);
             if (restaurant == null) return false;
 
-            restaurant.Address = dto.Address;
+            restaurant.Address = dto.Address; 
             restaurant.FssaiId = dto.FssaiId;
             restaurant.PinCode = dto.PinCode;
             restaurant.FssaiImage = dto.FssaiImage;

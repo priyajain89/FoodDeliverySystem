@@ -166,6 +166,7 @@ namespace FoodDelivery.Api.Controllers
             }
         }
 
+
         [HttpPut("update-status")]
         [Authorize(Roles = "Restaurant")]
         public async Task<IActionResult> UpdateOrderStatus([FromBody] UpdateOrderStatusDto dto)
@@ -182,6 +183,125 @@ namespace FoodDelivery.Api.Controllers
             {
                 return BadRequest(new { Message = ex.Message });
             }
+        }
+
+        [HttpGet("track/{orderId}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> TrackOrder(int orderId)
+        {
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+                return NotFound("Order not found.");
+
+            var dto = new TrackOrderDto
+            {
+                OrderId = order.OrderId,
+                Status = order.Status,
+                PlacedOn = order.OrderDate,
+                EstimatedDelivery = "30–45 minutes", // Optional: calculate based on distance
+                AgentName = order.Agent?.User?.Name ?? "Not Assigned"
+            };
+
+            return Ok(dto);
+        }
+
+        [HttpGet("history")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetOrderHistory()
+        {
+            var customerId = GetUserIdFromToken();
+            if (customerId == null)
+                return Unauthorized("CustomerId not found in token.");
+
+            var orders = await _orderRepository.GetOrdersByCustomerIdAsync(customerId.Value);
+
+            var history = orders.Select(order => new OrderHistoryDto
+            {
+                OrderId = order.OrderId,
+                RestaurantName = order.Restaurant?.User?.Name ?? "Unknown",
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                OrderDate = order.OrderDate
+            });
+
+            return Ok(history);
+        }
+
+
+        //[HttpPut("assign-address")]
+
+        //public async Task<IActionResult> AssignAddress([FromBody] AssignAddressToOrderDto dto)
+
+        //{
+
+        //    var success = await _orderRepository.AssignAddressToOrderAsync(dto);
+
+        //    if (!success)
+
+        //        return NotFound("Order not found.");
+
+        //    return Ok(new { Message = "Address assigned to order." });
+
+        //}
+
+        //[HttpPut("assign-agent/{orderId}")]
+
+        //public async Task<IActionResult> AssignAgentToOrder(int orderId)
+
+        //{
+
+        //    try
+
+        //    {
+
+        //        var order = await _orderRepository.GetOrderByIdAsync(orderId);
+
+        //        if (order == null)
+
+        //            return NotFound("Order not found.");
+
+        //        var agent = await _assignmentService.AssignNearestAgentAsync(order);
+
+        //        if (agent == null)
+
+        //            return NotFound("No available delivery agents.");
+
+        //        await _orderRepository.UpdateOrderAsync(order);
+
+        //        return Ok(new
+
+        //        {
+
+        //            Message = "Agent assigned to order.",
+
+        //            AgentId = agent.UserId,
+
+        //            AgentName = agent.User?.Name ?? "Unknown"
+
+        //        });
+
+        //    }
+
+        //    catch (Exception ex)
+
+        //    {
+
+        //        return BadRequest(new { Message = ex.Message });
+
+        //    }
+
+        //}
+
+
+        private int? GetUserIdFromToken()
+        {
+            var idClaim = User.FindFirst("id")?.Value;
+            if (string.IsNullOrEmpty(idClaim)) return null;
+
+            if (int.TryParse(idClaim, out var userId))
+                return userId;
+
+            return null;
         }
 
     }

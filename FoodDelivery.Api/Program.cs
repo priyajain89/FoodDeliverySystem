@@ -197,6 +197,7 @@ namespace FoodDelivery.Api
 
                         policy.WithOrigins("http://localhost:4200") // Angular dev server
 
+
                               .AllowAnyHeader()
 
                               .AllowAnyMethod();
@@ -235,6 +236,7 @@ namespace FoodDelivery.Api
         }
 
     }
+
 
 }
 

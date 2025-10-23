@@ -174,15 +174,20 @@ public class CartController : ControllerBase
 
     [HttpPut("update-quantity")]
 
+
     public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityDto dto)
 
     {
 
         var success = await _cartRepository.UpdateQuantityAsync(dto.CartItemId, dto.Quantity);
 
-        if (!success) return NotFound("Cart item not found");
+        if (!success)
 
-        return Ok("Quantity updated successfully");
+            return NotFound(new { message = "Cart item not found" });
+
+        return Ok(new { message = "Quantity updated successfully" });
+
+
 
     }
 
@@ -195,12 +200,12 @@ public class CartController : ControllerBase
 
         var success = await _cartRepository.RemoveItemAsync(cartItemId);
 
-        if (!success) return NotFound("Cart item not found");
 
-        return Ok("Item removed successfully");
+        if (!success)
+
+            return NotFound(new { message = "Cart item not found" });
+
+        return Ok(new { message = "Item removed successfully" });
 
     }
-
 }
-
-

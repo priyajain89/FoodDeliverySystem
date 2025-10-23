@@ -3,6 +3,7 @@ using FoodDelivery.Domain.Models;
 using FoodDelivery.Infrastructure.DTO;
 using FoodDelivery.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodDelivery.Infrastructure.Repository
 {
@@ -31,19 +32,23 @@ namespace FoodDelivery.Infrastructure.Repository
                 return agent;
             }
 
-        public async Task<bool> UpdateDeliveryAgentAsync(DeliveryAgentResponseDto dto)
+        public async Task<bool> UpdateDeliveryAgentAsync(DeliveryAgent agent, IFormFile? DocumentUrl)
         {
-            var agent = await _context.DeliveryAgents.FindAsync(dto.AgentId);
-            if (agent == null) return false;
+            var existingAgent = await _context.DeliveryAgents
+                .FirstOrDefaultAsync(a => a.UserId == agent.UserId);
 
-            agent.UserId = dto.UserId;
-            agent.DocumentUrl = dto.DocumentUrl;
-            agent.Address = dto.Address;
+            if (existingAgent == null) return false;
 
-            _context.DeliveryAgents.Update(agent);
+            if (DocumentUrl != null)
+                existingAgent.DocumentUrl = await _fileService.SaveFileAsync(DocumentUrl, "DeliveryAgent docs");
+
+            existingAgent.Address = agent.Address;
+
+            _context.DeliveryAgents.Update(existingAgent);
             await _context.SaveChangesAsync();
             return true;
         }
+
 
 
         public async Task<bool> MarkAgentAvailableAsync(int agentId)
@@ -57,7 +62,13 @@ namespace FoodDelivery.Infrastructure.Repository
             return true;
         }
 
+        public async Task<int?> GetAgentIdByUserIdAsync(int userId)
+        {
+            var agent = await _context.DeliveryAgents
+                .FirstOrDefaultAsync(a => a.UserId == userId);
 
+            return agent?.AgentId;
+        }
     }
 }
 

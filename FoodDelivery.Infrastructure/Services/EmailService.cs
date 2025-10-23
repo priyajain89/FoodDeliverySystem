@@ -61,7 +61,6 @@ namespace FoodDelivery.Infrastructure.Services
 
         }
 
-
     }
 
 }
