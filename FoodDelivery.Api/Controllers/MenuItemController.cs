@@ -72,7 +72,6 @@ namespace FoodDelivery.Api.Controllers
         }
 
 
-
         [HttpGet("search-by-pincode")]
         public async Task<IActionResult> SearchByPinCode([FromQuery] string pinCode)
         {
@@ -124,5 +123,3 @@ namespace FoodDelivery.Api.Controllers
         }
     }
 }
-
-

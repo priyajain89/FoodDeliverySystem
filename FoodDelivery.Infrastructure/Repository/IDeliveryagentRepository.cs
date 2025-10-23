@@ -9,7 +9,7 @@ namespace FoodDelivery.Infrastructure.Repository
     public interface IDeliveryagentRepository
     {
         Task<DeliveryAgent> SubmitAgentDetailsAsync(DeliveryAgent agent, IFormFile? DocumentUrl);
-        Task<bool> UpdateDeliveryAgentAsync(DeliveryAgentResponseDto dto);
+        Task<bool> UpdateDeliveryAgentAsync(DeliveryAgent agent, IFormFile? DocumentUrl);
 
         Task<bool> MarkAgentAvailableAsync(int agentId);
     }

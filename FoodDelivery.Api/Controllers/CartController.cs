@@ -1,9 +1,8 @@
 
-﻿
 using FoodDelivery.Domain.Models;
 
 
-﻿using FoodDelivery.Domain.Models;
+using FoodDelivery.Domain.Models;
 
 using FoodDelivery.Infrastructure.DTO;
 using FoodDelivery.Infrastructure.Repository;
@@ -69,7 +68,7 @@ public class CartController : ControllerBase
     }
 
 
-   
+
 
 
     [HttpGet("customer-carts")]
@@ -88,7 +87,6 @@ public class CartController : ControllerBase
 
         var result = carts.Select(cart => new CartViewDto
         {
-            
             CartId = cart.CartId,
             CustomerId = cart.UserId ?? 0,
             RestaurantId = cart.RestaurantId ?? 0,
@@ -110,6 +108,7 @@ public class CartController : ControllerBase
 
     [HttpPut("update-quantity")]
 
+
     public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityDto dto)
 
     {
@@ -122,11 +121,11 @@ public class CartController : ControllerBase
 
         return Ok(new { message = "Quantity updated successfully" });
 
+
     }
 
 
     [HttpDelete("remove-item/{cartItemId}")]
-
     public async Task<IActionResult> RemoveItem(int cartItemId)
 
     {
@@ -140,7 +139,4 @@ public class CartController : ControllerBase
         return Ok(new { message = "Item removed successfully" });
 
     }
-
 }
-
-
