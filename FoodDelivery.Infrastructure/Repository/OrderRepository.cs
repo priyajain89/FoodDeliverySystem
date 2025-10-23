@@ -90,6 +90,17 @@ namespace FoodDelivery.Infrastructure.Repository
         }
 
 
+        public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(int customerId)
+        {
+            return await _context.Orders
+                .Include(o => o.Restaurant)
+                 .ThenInclude(r => r.User)
+                 //.Where(o => o.UserId == customerId && o.Status == "Delivered")
+                  .Where(o => o.UserId == customerId )
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<DeliveryOrderSummaryDto>> GetOrdersForAgentAsync(int agentId)
         {
             var orders = await _context.Orders

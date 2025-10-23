@@ -77,7 +77,8 @@ namespace FoodDelivery.Infrastructure.Repository
                         FssaiId = r.FssaiId,
                         PinCode = r.PinCode,
                        
-                        TradeId = r.TradeId
+                        TradeId = r.TradeId,
+                        OrderCount = _context.Orders.Count(o => o.RestaurantId == r.RestaurantId)
                     }).ToList()
                 })
                 .ToListAsync();
