@@ -32,4 +32,24 @@ namespace FoodDelivery.Infrastructure.DTO
         public string Status { get; set; } = string.Empty;
         public DateTime OrderDate { get; set; }
     }
+    // TrackOrderDto.cs
+    public class TrackOrderDto
+    {
+        public int OrderId { get; set; }
+        public string? Status { get; set; }
+        public DateTime? PlacedOn { get; set; }
+        public string? EstimatedDelivery { get; set; }
+        public string? AgentName { get; set; }
+    }
+
+    // OrderHistoryDto.cs
+    public class OrderHistoryDto
+    {
+        public int OrderId { get; set; }
+        public string? RestaurantName { get; set; }
+        public decimal? TotalAmount { get; set; }
+        public string? Status { get; set; }
+        public DateTime? OrderDate { get; set; }
+    }
+
 }

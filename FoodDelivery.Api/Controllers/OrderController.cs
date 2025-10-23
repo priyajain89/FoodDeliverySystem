@@ -39,6 +39,48 @@ namespace FoodDelivery.Api.Controllers
             }
         }
 
+        [HttpGet("track/{orderId}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> TrackOrder(int orderId)
+        {
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+                return NotFound("Order not found.");
+
+            var dto = new TrackOrderDto
+            {
+                OrderId = order.OrderId,
+                Status = order.Status,
+                PlacedOn = order.OrderDate,
+                EstimatedDelivery = "30–45 minutes", // Optional: calculate based on distance
+                AgentName = order.Agent?.User?.Name ?? "Not Assigned"
+            };
+
+            return Ok(dto);
+        }
+
+        [HttpGet("history")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> GetOrderHistory()
+        {
+            var customerId = GetUserIdFromToken();
+            if (customerId == null)
+                return Unauthorized("CustomerId not found in token.");
+
+            var orders = await _orderRepository.GetOrdersByCustomerIdAsync(customerId.Value);
+
+            var history = orders.Select(order => new OrderHistoryDto
+            {
+                OrderId = order.OrderId,
+                RestaurantName = order.Restaurant?.User?.Name ?? "Unknown",
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                OrderDate = order.OrderDate
+            });
+
+            return Ok(history);
+        }
+
 
         [HttpPut("assign-address")]
         public async Task<IActionResult> AssignAddress([FromBody] AssignAddressToOrderDto dto)
@@ -76,6 +118,17 @@ namespace FoodDelivery.Api.Controllers
             {
                 return BadRequest(new { Message = ex.Message });
             }
+        }
+
+        private int? GetUserIdFromToken()
+        {
+            var idClaim = User.FindFirst("id")?.Value;
+            if (string.IsNullOrEmpty(idClaim)) return null;
+
+            if (int.TryParse(idClaim, out var userId))
+                return userId;
+
+            return null;
         }
 
     }
