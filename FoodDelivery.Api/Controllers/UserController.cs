@@ -188,11 +188,9 @@ namespace FoodDelivery.Api.Controllers
 
             }
 
+            await _otpService.GenerateOtpAsync(dto.Email);
 
             return Ok(new { message = "OTP sent successfully to your email." });
-
-
-
 
         }
 
@@ -227,8 +225,7 @@ namespace FoodDelivery.Api.Controllers
 
                 token = tokenString,
 
-                role = user.Role,
-
+                role = user.Role
 
 
             });

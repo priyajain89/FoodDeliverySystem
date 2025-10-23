@@ -23,11 +23,11 @@ namespace FoodDelivery.Infrastructure.Services
             var claims = new List<Claim>()
             {
                 new Claim("id", id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
                 new Claim("name", name),
                 new Claim("Email",email),
 
-                new Claim("Role", role),          // custom claim for frontend
-
+                new Claim("Role",role),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
             };

@@ -16,5 +16,8 @@ namespace FoodDelivery.Infrastructure.Repository
         Task UpdateOrderAsync(Order order);
         Task<IEnumerable<DeliveryOrderSummaryDto>> GetOrdersForAgentAsync(int agentId);
 
+        Task<IEnumerable<RestaurantOrderViewDto>> GetOrdersForRestaurantAsync(int restaurantId);
+        Task<bool> UpdateOrderStatusAsync(UpdateOrderStatusDto dto);
+
     }
 }

@@ -1,14 +1,11 @@
 ﻿using FoodDelivery.Domain.Models;
-
 using FoodDelivery.Infrastructure.DTO;
-
 using FoodDelivery.Infrastructure.Repository;
-
 using FoodDelivery.Infrastructure.Services;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FoodDelivery.Api.Controllers
 
@@ -81,6 +78,7 @@ namespace FoodDelivery.Api.Controllers
 
         }
 
+        [Authorize(Roles = "Restaurant")]
         [HttpGet("getAllrestaurants")]
 
         public async Task<IActionResult> GetAllRestaurants()
@@ -93,27 +91,45 @@ namespace FoodDelivery.Api.Controllers
 
         }
 
-        [HttpGet("getByUserId/{userId}")]
-        public async Task<IActionResult> GetByUserId(int userId)
+        [Authorize(Roles = "Restaurant")]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetRestaurantProfile()
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User ID not found in token.");
+
+            int userId = int.Parse(userIdClaim.Value);
             var restaurant = await _repo.GetRestaurantByUserIdAsync(userId);
-            if (restaurant == null) return NotFound("Restaurant not found.");
+
+            if (restaurant == null)
+                return NotFound("Restaurant profile not found.");
+
             return Ok(restaurant);
         }
-
-        [HttpPut("restaurant/update")]
-
+        [Authorize(Roles = "Restaurant")]
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateRestaurant([FromBody] RestaurantIDDto dto)
-
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User ID not found in token.");
 
-            var result = await _repo.UpdateRestaurantAsync(dto);
+            int userId = int.Parse(userIdClaim.Value);
 
-            if (!result) return NotFound("Restaurant not found.");
+            // Ensure the user is updating their own restaurant
+            if (dto.UserId != userId)
+                return Forbid("You can only update your own restaurant profile.");
 
-            return Ok("Restaurant updated successfully.");
+            var success = await _repo.UpdateRestaurantAsync(dto);
+            if (!success)
+                return NotFound("Restaurant not found or update failed.");
 
+            return Ok("Restaurant profile updated successfully.");
         }
+
+
+
 
     }
 

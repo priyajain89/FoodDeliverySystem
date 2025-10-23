@@ -12,5 +12,6 @@ namespace FoodDelivery.Infrastructure.Repository
         Task<bool> UpdateRestaurantAsync(RestaurantIDDto dto);
 
         Task<RestaurantIDDto?> GetRestaurantByUserIdAsync(int userId);
+
     }
 }

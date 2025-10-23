@@ -104,6 +104,8 @@ namespace FoodDelivery.Infrastructure.Repository
             return true;
         }
 
+   
+
         public async Task<RestaurantIDDto?> GetRestaurantByUserIdAsync(int userId)
         {
             var restaurant = await _context.Restaurants
@@ -111,7 +113,7 @@ namespace FoodDelivery.Infrastructure.Repository
                 .Select(r => new RestaurantIDDto
                 {
                     RestaurantId = r.RestaurantId,
-                    UserId = r.UserId ?? 0,
+                    UserId = r.UserId,
                     Address = r.Address,
                     FssaiId = r.FssaiId,
                     PinCode = r.PinCode,
