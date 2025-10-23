@@ -108,12 +108,12 @@ namespace FoodDelivery.Api
                 options.AddPolicy("AllowAngularApp",
                     policy =>
                     {
-                        policy.WithOrigins("http://localhost:4200") // Angular dev server
+                        policy.WithOrigins("http://localhost:4200") 
+
                               .AllowAnyHeader()
                               .AllowAnyMethod();
                     });
             });
-
 
 
             var app = builder.Build();
@@ -124,6 +124,7 @@ namespace FoodDelivery.Api
                 app.UseSwaggerUI();
                 
             }
+
             app.UseStaticFiles();
             app.UseCors("AllowAngularApp");
 

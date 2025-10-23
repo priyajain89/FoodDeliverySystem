@@ -123,13 +123,11 @@ namespace FoodDelivery.Api.Controllers
 
             }
 
-            await _otpService.GenerateOtpAsync(dto.Email);
 
+            await _otpService.GenerateOtpAsync(dto.Email);
 
             return Ok(new { message = "OTP sent successfully to your email." });
 
-
-      
         }
 
         [HttpPost("verify-otp")]
@@ -162,9 +160,8 @@ namespace FoodDelivery.Api.Controllers
                 message = "OTP verified successfully. You are Logged in.",
 
                 token = tokenString,
-                role = user.Role,
-                
 
+                role=user.Role
 
 
             });
@@ -175,4 +172,3 @@ namespace FoodDelivery.Api.Controllers
     }
 
 }
-

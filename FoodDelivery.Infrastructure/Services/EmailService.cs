@@ -33,6 +33,5 @@ namespace FoodDelivery.Infrastructure.Services
             CreateSmtpClient().Send(message);
         }
 
-
     }
 }

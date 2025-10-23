@@ -42,6 +42,7 @@ public class CartRepository : ICartRepository
         return cartItem;
     }
 
+
     public async Task<Cart?> GetCartWithItemsAsync(int customerId)
     {
         return await _context.Carts
@@ -81,7 +82,6 @@ public class CartRepository : ICartRepository
         await _context.SaveChangesAsync();
         return true;
     }
-
 
 
 

@@ -13,4 +13,3 @@ public interface ICartRepository
     Task<bool> RemoveItemAsync(int cartItemId);
 
 }
-
