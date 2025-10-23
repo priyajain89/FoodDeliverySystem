@@ -62,7 +62,13 @@ namespace FoodDelivery.Infrastructure.Repository
             return true;
         }
 
+        public async Task<int?> GetAgentIdByUserIdAsync(int userId)
+        {
+            var agent = await _context.DeliveryAgents
+                .FirstOrDefaultAsync(a => a.UserId == userId);
 
+            return agent?.AgentId;
+        }
     }
 }
 

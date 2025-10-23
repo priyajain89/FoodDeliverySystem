@@ -114,26 +114,26 @@ namespace FoodDelivery.Api.Controllers
 
 
         [HttpGet("orders/agentId")]
-
+        [Authorize(Roles = "DeliveryAgent")]
         public async Task<IActionResult> GetOrdersForAgent()
-
         {
-
             var idClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("id");
 
-            if (idClaim == null || !int.TryParse(idClaim.Value, out int agentId))
-
+            if (idClaim == null || !int.TryParse(idClaim.Value, out int userId))
             {
-
-                return Unauthorized("Agent ID not found in token.");
-
+                return Unauthorized("User ID not found in token.");
             }
 
-            var orders = await _orderRepo.GetOrdersForAgentAsync(agentId);
+            var agentId = await _repo.GetAgentIdByUserIdAsync(userId);
+            if (agentId == null)
+            {
+                return NotFound("No delivery agent found for this user.");
+            }
 
+            var orders = await _orderRepo.GetOrdersForAgentAsync(agentId.Value);
             return Ok(orders);
-
         }
+
 
 
         [HttpPost("mark-delivered/{orderId}")]
@@ -166,7 +166,8 @@ namespace FoodDelivery.Api.Controllers
 
             }
 
-            return Ok("Order marked as delivered and agent availability updated.");
+            return Ok(new { success = true, message = "Order marked as delivered and agent availability updated" });
+
 
         }
 

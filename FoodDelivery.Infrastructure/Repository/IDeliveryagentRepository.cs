@@ -12,5 +12,7 @@ namespace FoodDelivery.Infrastructure.Repository
         Task<bool> UpdateDeliveryAgentAsync(DeliveryAgent agent, IFormFile? DocumentUrl);
 
         Task<bool> MarkAgentAvailableAsync(int agentId);
+
+        Task<int?> GetAgentIdByUserIdAsync(int userId);
     }
 }

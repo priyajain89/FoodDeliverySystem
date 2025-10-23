@@ -122,13 +122,9 @@ namespace FoodDelivery.Api.Controllers
                 return Unauthorized("Your account is not verified. Please contact support.");
 
             }
-<<<<<<< HEAD
 
             await _otpService.GenerateOtpAsync(dto.Email);
-=======
-            await _otpService.GenerateOtpAsync(dto.Email);
 
->>>>>>> 0c2d5266652823ba73b0f7532c7dfee236cb6b66
             return Ok(new { message = "OTP sent successfully to your email." });
 
         }
